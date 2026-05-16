@@ -102,15 +102,23 @@ Start production server after a successful build:
 npm run start
 ```
 
-## Supabase Setup
+## Supabase Setup (CLI — recommended)
 
-Create a Supabase project, then run these SQL files in order from the Supabase SQL editor:
+1. Create a project at [supabase.com](https://supabase.com)
+2. Create an access token: Dashboard → Account → Access Tokens
+3. Run (PowerShell):
 
-1. `supabase/schema.sql`
-2. `supabase/rls.sql`
-3. `supabase/auth.sql`
-4. `supabase/seed.sql`
-5. `supabase/seed-auth.sql` (after creating Auth users — see file comments)
+```powershell
+npm install
+.\scripts\supabase-setup.ps1 -AccessToken "sbp_..." -ProjectRef "your-project-ref"
+```
+
+This runs `supabase link`, `db push --include-seed`, and writes `.env.local`.
+
+4. Create Auth users in Dashboard → Authentication → Users
+5. Run `supabase/seed-auth.sql` in SQL Editor
+
+Manual SQL (if not using CLI): `schema.sql` → `rls.sql` → `auth.sql` → `seed.sql` → `seed-auth.sql`
 
 Schema includes:
 
