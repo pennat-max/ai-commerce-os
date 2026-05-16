@@ -1,3 +1,4 @@
+import { ensureCommerceProfile } from "@/lib/auth/ensure-profile";
 import { createClient } from "@/lib/supabase/server";
 import type { AppSession } from "@/types/auth";
 import type { UserRole } from "@/types/domain";
@@ -25,6 +26,9 @@ export async function getAppSession(): Promise<AppSession | null> {
   } = await supabase.auth.getUser();
 
   if (userError || !user) return null;
+
+  const ensured = await ensureCommerceProfile(supabase, user);
+  if (!ensured || ensured.error) return null;
 
   const { data: profile, error: profileError } = await supabase
     .from("commerce_profiles")

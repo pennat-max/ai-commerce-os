@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { ensureCommerceProfile } from "@/lib/auth/ensure-profile";
 import { getHomePathForRole } from "@/lib/auth/routes";
 import type { UserRole } from "@/types/domain";
 
@@ -51,18 +52,17 @@ export function LoginForm() {
         return;
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from("commerce_profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .maybeSingle();
+      const profileResult = await ensureCommerceProfile(supabase, data.user);
 
-      if (profileError || !profile) {
-        setMessage("เข้าสู่ระบบแล้ว แต่ยังไม่มี profile ในระบบ กรุณารัน seed-auth.sql");
+      if (!profileResult || profileResult.error) {
+        setMessage(
+          profileResult?.error ??
+            "ไม่สามารถสร้าง profile ได้ กรุณาติดต่อผู้ดูแลระบบ",
+        );
         return;
       }
 
-      const role = profile.role as UserRole;
+      const role = profileResult.role;
       const destination = role === "SUPER_ADMIN" ? getHomePathForRole(role) : nextPath;
 
       router.replace(destination);
