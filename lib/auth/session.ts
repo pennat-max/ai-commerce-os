@@ -27,7 +27,7 @@ export async function getAppSession(): Promise<AppSession | null> {
   if (userError || !user) return null;
 
   const { data: profile, error: profileError } = await supabase
-    .from("profiles")
+    .from("commerce_profiles")
     .select("id, email, full_name, role")
     .eq("id", user.id)
     .maybeSingle();

@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   }
 
   const { data: profile } = await supabase
-    .from("profiles")
+    .from("commerce_profiles")
     .select("role")
     .eq("id", user.id)
     .maybeSingle();

@@ -67,6 +67,6 @@ async function getUserRole(
   supabase: ReturnType<typeof createServerClient>,
   userId: string,
 ): Promise<UserRole | null> {
-  const { data } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
+  const { data } = await supabase.from("commerce_profiles").select("role").eq("id", userId).maybeSingle();
   return (data?.role as UserRole | undefined) ?? null;
 }
