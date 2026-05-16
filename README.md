@@ -31,9 +31,10 @@ Phase 1 uses mock marketplace data only. It does not connect to real Shopee, Laz
 - Product/SKU management UI
 - Profit calculator utility
 - Campaign recommendation utility
-- Manual approval mock flow with stateful Approve, Watch, and Reject buttons
+- Manual approval flow with stateful Approve, Watch, and Reject buttons
 - LocalStorage-backed mock login/session and persisted mock campaign decisions
 - Supabase-aware login/logout fallback: if Supabase env vars are configured, login attempts Supabase Auth first; otherwise it runs as a mock role picker.
+- Supabase-backed product reads and campaign decision read/write mode via `NEXT_PUBLIC_DATA_SOURCE=supabase`
 - Mock quick actions for apply campaign, price update, and stop campaign
 - LINE, email, and dashboard alert mock UI
 - Supabase multi-tenant schema using `organization_id`
@@ -61,7 +62,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_DATA_SOURCE=mock
 ```
 
-`NEXT_PUBLIC_DATA_SOURCE=mock` is the default for the MVP. Use it while marketplace and database write flows are still being validated. The Supabase client and data access helpers are already present for the next integration step.
+`NEXT_PUBLIC_DATA_SOURCE=mock` is the safest local default. Set it to `supabase` after running the SQL schema, RLS policies, and seed data if you want the dashboard to read seeded products and persist campaign decisions in Supabase.
 
 Run the development server:
 
@@ -174,16 +175,18 @@ Core files:
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_APP_URL=https://your-vercel-domain.vercel.app
+NEXT_PUBLIC_DATA_SOURCE=supabase
 ```
 
 5. Deploy.
 
-The MVP will deploy and run using mock data even before real marketplace integrations are added.
+The MVP can deploy with `NEXT_PUBLIC_DATA_SOURCE=mock`, but the current Supabase demo mode is ready when the schema, seed, and RLS files have been applied.
 
 ## Remaining Next Steps
 
 - Replace mock auth with Supabase Auth.
-- Read and write products, campaigns, alerts, and decisions from Supabase.
+- Move all customer/admin mutations behind authenticated Supabase users instead of the Phase 1 public demo policy.
+- Expand Supabase repositories for campaigns, alerts, settings, and admin usage pages.
 - Add role-aware route protection for admin and customer dashboards.
 - Add product and campaign detail pages with full profit breakdown.
 - Add real LINE notification integration.

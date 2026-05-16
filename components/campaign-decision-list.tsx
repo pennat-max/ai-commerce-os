@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "@/components/status";
 import { StatBox } from "@/components/commerce-card";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
-import { saveCampaignDecisionAction } from "@/lib/client-db";
+import { loadCampaignDecisionActions, saveCampaignDecisionAction } from "@/lib/client-db";
 import { formatBaht, formatPercent } from "@/lib/profit";
 import type { Campaign, DecisionAction, Product } from "@/types/domain";
 
@@ -38,6 +38,10 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
       }),
     [campaigns, products],
   );
+  const campaignIdsKey = useMemo(
+    () => rows.map(({ campaign }) => campaign.id).join(","),
+    [rows],
+  );
   const [actions, setActions] = useState<Record<string, DecisionAction>>(() => {
     const defaults = Object.fromEntries(
       rows.map(({ campaign }) => [campaign.id, "watch" as DecisionAction]),
@@ -57,6 +61,28 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
   });
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [syncState, setSyncState] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let isActive = true;
+    const campaignIds = campaignIdsKey ? campaignIdsKey.split(",") : [];
+
+    async function syncFromDatabase() {
+      const result = await loadCampaignDecisionActions(campaignIds);
+      if (!isActive || !result.ok) return;
+
+      setActions((current) => {
+        const next = { ...current, ...result.actions };
+        window.localStorage.setItem(storageKey, JSON.stringify(next));
+        return next;
+      });
+    }
+
+    syncFromDatabase();
+
+    return () => {
+      isActive = false;
+    };
+  }, [campaignIdsKey]);
 
   async function setDecision(campaignId: string, action: DecisionAction) {
     setActions((current) => {
@@ -123,28 +149,28 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
 
             <div className="mt-3 grid grid-cols-4 gap-2">
               <button
-                className="min-h-11 rounded-lg border border-emerald-200 bg-emerald-500/90 text-sm font-black text-white shadow-sm shadow-emerald-100"
+                className="min-h-11 rounded-lg border border-emerald-200 bg-emerald-50 text-sm font-black text-emerald-800 shadow-sm shadow-emerald-100"
                 onClick={() => setDecision(campaign.id, "approve")}
               >
-                Approve
+                อนุมัติ
               </button>
               <button
-                className="min-h-11 rounded-lg border border-orange-200 bg-orange-400 text-sm font-black text-white shadow-sm shadow-orange-100"
+                className="min-h-11 rounded-lg border border-amber-200 bg-amber-50 text-sm font-black text-amber-800 shadow-sm shadow-amber-100"
                 onClick={() => setDecision(campaign.id, "watch")}
               >
-                Watch
+                เฝ้าดู
               </button>
               <button
-                className="min-h-11 rounded-lg border border-rose-200 bg-rose-500/90 text-sm font-black text-white shadow-sm shadow-rose-100"
+                className="min-h-11 rounded-lg border border-rose-200 bg-rose-50 text-sm font-black text-rose-800 shadow-sm shadow-rose-100"
                 onClick={() => setDecision(campaign.id, "reject")}
               >
-                Reject
+                ปฏิเสธ
               </button>
               <Link
                 href={`/app/campaigns/${campaign.id}`}
-                className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-slate-900 text-sm font-black text-white"
+                className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-black text-slate-700"
               >
-                Detail
+                รายละเอียด
               </Link>
             </div>
           </article>
