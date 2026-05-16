@@ -2,17 +2,23 @@ import { LockKeyhole, ShieldCheck, Store, Users } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { platformLabel } from "@/components/status";
+import { getAppSession } from "@/lib/auth/session";
 import { getDatabaseStatus, listStores } from "@/lib/repositories";
 
 export default async function SettingsPage() {
+  const session = await getAppSession();
   const stores = listStores();
   const databaseStatus = await getDatabaseStatus();
 
   return (
-    <AppShell title="Settings" subtitle="จัดการองค์กร ร้านค้า และสิทธิ์ทีมงาน">
+    <AppShell title="ตั้งค่า" subtitle="จัดการองค์กร ร้านค้า และสิทธิ์ทีมงาน">
       <div className="mb-4 grid gap-3 md:grid-cols-4">
-        <StatBox label="องค์กร" value="บ้านสวยออนไลน์" helper="organization_id: org-1" />
-        <StatBox label="Role" value="Owner" helper="CUSTOMER_OWNER" tone="green" />
+        <StatBox
+          label="องค์กร"
+          value={session?.organizationName ?? "—"}
+          helper={session?.organizationId ? `org: ${session.organizationId}` : "ไม่มีองค์กร"}
+        />
+        <StatBox label="Role" value={session?.role ?? "—"} helper={session?.email ?? ""} tone="green" />
         <StatBox label="ร้านค้า" value={`${stores.length}`} helper="mock connected" />
         <StatBox
           label="Database"
@@ -47,7 +53,7 @@ export default async function SettingsPage() {
         </CommerceCard>
 
         <div className="grid gap-4">
-          <CommerceCard title="Database Connection">
+          <CommerceCard title="การเชื่อมต่อฐานข้อมูล">
             <div
               className={`rounded-xl p-4 text-sm font-bold ${
                 databaseStatus.connected
@@ -77,7 +83,7 @@ export default async function SettingsPage() {
             </div>
           </CommerceCard>
 
-          <CommerceCard title="Auto Mode">
+          <CommerceCard title="โหมด Auto">
             <div className="rounded-xl bg-slate-100 p-4 text-center">
               <LockKeyhole className="mx-auto text-slate-400" size={30} />
               <p className="mt-3 text-sm font-black text-slate-700">ยังไม่เปิดใน Phase 1</p>

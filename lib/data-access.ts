@@ -1,7 +1,8 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import type { DecisionAction } from "@/types/domain";
 
 export async function getProductsForOrganization(organizationId: string) {
+  const supabase = await createClient();
   if (!supabase) return { data: null, error: "Supabase env vars are not configured." };
 
   const { data, error } = await supabase
@@ -10,10 +11,11 @@ export async function getProductsForOrganization(organizationId: string) {
     .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
-  return { data, error };
+  return { data, error: error?.message ?? null };
 }
 
 export async function getCampaignDecisionsForOrganization(organizationId: string) {
+  const supabase = await createClient();
   if (!supabase) return { data: null, error: "Supabase env vars are not configured." };
 
   const { data, error } = await supabase
@@ -22,7 +24,7 @@ export async function getCampaignDecisionsForOrganization(organizationId: string
     .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
-  return { data, error };
+  return { data, error: error?.message ?? null };
 }
 
 export async function updateCampaignDecisionAction(
@@ -30,6 +32,7 @@ export async function updateCampaignDecisionAction(
   action: DecisionAction,
   profileId?: string,
 ) {
+  const supabase = await createClient();
   if (!supabase) return { data: null, error: "Supabase env vars are not configured." };
 
   const { data, error } = await supabase
@@ -43,5 +46,5 @@ export async function updateCampaignDecisionAction(
     .select()
     .single();
 
-  return { data, error };
+  return { data, error: error?.message ?? null };
 }

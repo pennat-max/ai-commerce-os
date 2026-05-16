@@ -5,8 +5,8 @@ export default function AdminPage() {
   return (
     <AppShell
       mode="admin"
-      title="Platform Owner Dashboard"
-      subtitle="ดูภาพรวมลูกค้า แพ็กเกจ ร้านค้า usage และ alerts ทั้งระบบ"
+      title="แดชบอร์ดเจ้าของระบบ"
+      subtitle="ดูภาพรวมลูกค้า แพ็กเกจ ร้านค้า การใช้งาน และแจ้งเตือนทั้งระบบ"
     >
       <div className="space-y-6">
         <AdminSummary />
@@ -30,7 +30,7 @@ export default function AdminPage() {
           </div>
         </section>
         <section>
-          <SectionTitle title="System Alerts" />
+          <SectionTitle title="แจ้งเตือนระบบ" />
           <div className="grid gap-3">
             {alerts.map((alert) => (
               <article key={alert.id} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">

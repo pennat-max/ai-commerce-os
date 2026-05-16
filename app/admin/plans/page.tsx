@@ -4,7 +4,7 @@ import { formatBaht } from "@/lib/profit";
 
 export default function PlansPage() {
   return (
-    <AppShell mode="admin" title="Plans" subtitle="บริหารแพ็กเกจ ราคา quota และสิทธิ์ใช้งาน">
+    <AppShell mode="admin" title="แพ็กเกจ" subtitle="บริหารแพ็กเกจ ราคา quota และสิทธิ์ใช้งาน">
       <SectionTitle title="แพ็กเกจ SaaS" />
       <div className="grid gap-3 md:grid-cols-3">
         {plans.map((plan) => (
@@ -13,9 +13,9 @@ export default function PlansPage() {
             <p className="mt-2 text-3xl font-black text-emerald-700">{formatBaht(plan.price)}</p>
             <p className="mt-1 text-sm text-slate-500">ต่อเดือน</p>
             <div className="mt-5 space-y-2 text-sm font-bold text-slate-700">
-              <p>{plan.stores} stores</p>
-              <p>{plan.decisions.toLocaleString("th-TH")} campaign decisions</p>
-              <p>LINE / Email / Dashboard alerts</p>
+              <p>{plan.stores} ร้าน</p>
+              <p>{plan.decisions.toLocaleString("th-TH")} การตัดสินใจแคมเปญ</p>
+              <p>แจ้งเตือน LINE / Email / Dashboard</p>
             </div>
           </article>
         ))}

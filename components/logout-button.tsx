@@ -1,27 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Loader2, LogOut } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export function LogoutButton() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function signOut() {
-    if (supabase) {
-      await supabase.auth.signOut();
+    setIsLoading(true);
+
+    try {
+      if (isSupabaseConfigured()) {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+      }
+    } finally {
+      router.replace("/login");
+      router.refresh();
+      setIsLoading(false);
     }
-    window.localStorage.removeItem("ai-commerce-os-session");
-    router.push("/login");
   }
 
   return (
     <button
-      className="flex size-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm"
+      type="button"
+      className="flex size-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm disabled:opacity-60"
       aria-label="ออกจากระบบ"
+      disabled={isLoading}
       onClick={signOut}
     >
-      <LogOut size={20} />
+      {isLoading ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
     </button>
   );
 }

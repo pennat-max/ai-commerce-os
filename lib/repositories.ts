@@ -1,9 +1,11 @@
-import { supabase } from "@/lib/supabase";
+import { getAppSession, resolveOrganizationId } from "@/lib/auth/session";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { products as mockProducts, stores as mockStores } from "@/lib/mock-data";
 import type { Platform, Product } from "@/types/domain";
 
 const useSupabaseData =
-  process.env.NEXT_PUBLIC_DATA_SOURCE === "supabase" && Boolean(supabase);
+  process.env.NEXT_PUBLIC_DATA_SOURCE === "supabase" && isSupabaseConfigured();
 
 type ProductRow = {
   id: string;
@@ -58,16 +60,25 @@ export type RepositoryResult<T> = {
 };
 
 export async function listProducts(
-  organizationId = "10000000-0000-0000-0000-000000000001",
+  organizationId?: string,
 ): Promise<RepositoryResult<Product[]>> {
-  if (!useSupabaseData || !supabase) {
+  const session = await getAppSession();
+  const orgId = resolveOrganizationId(session, organizationId);
+
+  if (!useSupabaseData) {
+    const scoped = mockProducts.filter((product) => product.organizationId === orgId);
+    return { data: scoped.length > 0 ? scoped : mockProducts, source: "mock" };
+  }
+
+  const supabase = await createClient();
+  if (!supabase) {
     return { data: mockProducts, source: "mock" };
   }
 
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .eq("organization_id", organizationId)
+    .eq("organization_id", orgId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -78,9 +89,19 @@ export async function listProducts(
 }
 
 export async function getProductById(id: string): Promise<RepositoryResult<Product | null>> {
+  const session = await getAppSession();
+  const orgId = resolveOrganizationId(session);
   const mockProduct = mockProducts.find((product) => product.id === id) ?? null;
 
-  if (!useSupabaseData || !supabase) {
+  if (!useSupabaseData) {
+    if (mockProduct && mockProduct.organizationId !== orgId && session?.role !== "SUPER_ADMIN") {
+      return { data: null, source: "mock" };
+    }
+    return { data: mockProduct, source: "mock" };
+  }
+
+  const supabase = await createClient();
+  if (!supabase) {
     return { data: mockProduct, source: "mock" };
   }
 
@@ -90,15 +111,33 @@ export async function getProductById(id: string): Promise<RepositoryResult<Produ
     return { data: mockProduct, source: "mock", error: error.message };
   }
 
-  return { data: data ? mapProduct(data as ProductRow) : mockProduct, source: data ? "supabase" : "mock" };
+  if (!data) {
+    return { data: null, source: "supabase" };
+  }
+
+  const product = mapProduct(data as ProductRow);
+  if (session?.role !== "SUPER_ADMIN" && product.organizationId !== orgId) {
+    return { data: null, source: "supabase", error: "ไม่มีสิทธิ์เข้าถึง SKU นี้" };
+  }
+
+  return { data: product, source: "supabase" };
 }
 
 export async function getDatabaseStatus() {
-  if (!supabase) {
+  if (!isSupabaseConfigured()) {
     return {
       connected: false,
       source: "mock" as const,
       message: "Supabase env vars are not configured. App is running with mock data.",
+    };
+  }
+
+  const supabase = await createClient();
+  if (!supabase) {
+    return {
+      connected: false,
+      source: "mock" as const,
+      message: "Supabase client could not be created.",
     };
   }
 

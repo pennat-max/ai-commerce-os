@@ -47,7 +47,7 @@ export function QuickActions() {
       ].map(([key, label, tone]) => (
         <button
           key={key}
-          className={`min-h-12 rounded-lg border px-4 text-sm font-black shadow-sm transition ${buttonClass[tone as keyof typeof buttonClass]}`}
+          className={`min-h-12 rounded-xl border px-4 text-sm font-black shadow-sm transition active:scale-[0.98] ${buttonClass[tone as keyof typeof buttonClass]}`}
           onClick={() => setLastAction(actionCopy[key])}
         >
           {label}

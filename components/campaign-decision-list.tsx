@@ -147,28 +147,31 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
               ) : null}
             </div>
 
-            <div className="mt-3 grid grid-cols-4 gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <button
-                className="min-h-11 rounded-lg border border-emerald-200 bg-emerald-50 text-sm font-black text-emerald-800 shadow-sm shadow-emerald-100"
+                type="button"
+                className="min-h-12 rounded-xl border border-emerald-200 bg-emerald-50 text-sm font-black text-emerald-800 active:scale-[0.98]"
                 onClick={() => setDecision(campaign.id, "approve")}
               >
                 อนุมัติ
               </button>
               <button
-                className="min-h-11 rounded-lg border border-amber-200 bg-amber-50 text-sm font-black text-amber-800 shadow-sm shadow-amber-100"
+                type="button"
+                className="min-h-12 rounded-xl border border-amber-200 bg-amber-50 text-sm font-black text-amber-800 active:scale-[0.98]"
                 onClick={() => setDecision(campaign.id, "watch")}
               >
                 เฝ้าดู
               </button>
               <button
-                className="min-h-11 rounded-lg border border-rose-200 bg-rose-50 text-sm font-black text-rose-800 shadow-sm shadow-rose-100"
+                type="button"
+                className="min-h-12 rounded-xl border border-rose-200 bg-rose-50 text-sm font-black text-rose-800 active:scale-[0.98]"
                 onClick={() => setDecision(campaign.id, "reject")}
               >
                 ปฏิเสธ
               </button>
               <Link
                 href={`/app/campaigns/${campaign.id}`}
-                className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-black text-slate-700"
+                className="flex min-h-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-sm font-black text-slate-700 active:scale-[0.98]"
               >
                 รายละเอียด
               </Link>

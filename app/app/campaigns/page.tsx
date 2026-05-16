@@ -14,7 +14,7 @@ export default function CampaignsPage() {
   const goodCount = decisions.filter((item) => item.decision.recommendation === "GOOD").length;
 
   return (
-    <AppShell title="Campaign Decisions" subtitle="อนุมัติ ปฏิเสธ หรือ Watch ก่อนเข้าแคมเปญ">
+    <AppShell title="แคมเปญและการตัดสินใจ" subtitle="อนุมัติ ปฏิเสธ หรือเฝ้าดูก่อนเข้าแคมเปญ">
       <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-3 md:grid-cols-3">
           <StatBox label="รอ Manual Approval" value={`${decisions.length}`} helper="Phase 1" />
@@ -29,7 +29,7 @@ export default function CampaignsPage() {
         action={
           <span className="flex items-center gap-2 rounded-lg bg-slate-200 px-3 py-2 text-xs font-black text-slate-500">
             <LockKeyhole size={14} />
-            Auto Mode locked
+            Auto Mode ปิดอยู่
           </span>
         }
       >

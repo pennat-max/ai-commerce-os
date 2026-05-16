@@ -3,7 +3,7 @@ import { organizations } from "@/lib/mock-data";
 
 export default function CustomersPage() {
   return (
-    <AppShell mode="admin" title="Customers" subtitle="จัดการองค์กร ลูกค้า ร้านค้า และ subscription">
+    <AppShell mode="admin" title="ลูกค้า" subtitle="จัดการองค์กร ลูกค้า ร้านค้า และ subscription">
       <SectionTitle
         title="องค์กรลูกค้า"
         action={<button className="min-h-11 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white">เพิ่มลูกค้า</button>}
@@ -17,7 +17,7 @@ export default function CustomersPage() {
                 <p className="text-sm text-slate-600">{organization.owner} · {organization.id}</p>
               </div>
               <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-sky-800">
-                Active
+                ใช้งานอยู่
               </span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 text-sm">

@@ -1,6 +1,7 @@
 "use client";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { DecisionAction } from "@/types/domain";
 
 type CampaignDecisionActionRow = {
@@ -9,7 +10,7 @@ type CampaignDecisionActionRow = {
 };
 
 export async function loadCampaignDecisionActions(campaignIds: string[]) {
-  if (process.env.NEXT_PUBLIC_DATA_SOURCE !== "supabase" || !supabase) {
+  if (process.env.NEXT_PUBLIC_DATA_SOURCE !== "supabase" || !isSupabaseConfigured()) {
     return {
       ok: false,
       source: "mock" as const,
@@ -22,6 +23,7 @@ export async function loadCampaignDecisionActions(campaignIds: string[]) {
     return { ok: true, source: "supabase" as const, actions: {} as Record<string, DecisionAction> };
   }
 
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("campaign_decisions")
     .select("campaign_id, action")
@@ -44,9 +46,14 @@ export async function loadCampaignDecisionActions(campaignIds: string[]) {
 }
 
 export async function saveCampaignDecisionAction(campaignId: string, action: DecisionAction) {
-  if (process.env.NEXT_PUBLIC_DATA_SOURCE !== "supabase" || !supabase) {
-    return { ok: false, source: "mock" as const, error: "Supabase is not enabled." };
+  if (process.env.NEXT_PUBLIC_DATA_SOURCE !== "supabase" || !isSupabaseConfigured()) {
+    return { ok: true, source: "mock" as const, error: undefined };
   }
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .from("campaign_decisions")
@@ -59,6 +66,7 @@ export async function saveCampaignDecisionAction(campaignId: string, action: Dec
             ? "ปฏิเสธจากหน้าเว็บ Phase 1"
             : "เฝ้าดูต่อจากหน้าเว็บ Phase 1",
       decided_at: new Date().toISOString(),
+      decided_by: user?.id ?? null,
     })
     .eq("campaign_id", campaignId)
     .select("campaign_id, action")

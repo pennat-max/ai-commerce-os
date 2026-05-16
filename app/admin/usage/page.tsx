@@ -3,8 +3,8 @@ import { organizations } from "@/lib/mock-data";
 
 export default function UsagePage() {
   return (
-    <AppShell mode="admin" title="Usage" subtitle="ติดตาม quota, alerts, stores และ campaign decision volume">
-      <SectionTitle title="Usage by organization" />
+    <AppShell mode="admin" title="การใช้งาน" subtitle="ติดตาม quota แจ้งเตือน ร้านค้า และปริมาณการตัดสินใจแคมเปญ">
+      <SectionTitle title="การใช้งานตามองค์กร" />
       <div className="grid gap-3">
         {organizations.map((organization, index) => {
           const usage = [72, 44, 86][index];
@@ -13,7 +13,7 @@ export default function UsagePage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="font-black">{organization.name}</h2>
-                  <p className="text-sm text-slate-600">{organization.plan} · {organization.stores} stores</p>
+                  <p className="text-sm text-slate-600">{organization.plan} · {organization.stores} ร้าน</p>
                 </div>
                 <p className="text-xl font-black">{usage}%</p>
               </div>

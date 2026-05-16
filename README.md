@@ -15,7 +15,7 @@ Phase 1 uses mock marketplace data only. It does not connect to real Shopee, Laz
 
 ## What Is Built
 
-- Mock login page with admin and customer entry points
+- Supabase Auth login with email/password and protected routes
 - Super admin dashboard:
   - `/admin`
   - `/admin/customers`
@@ -54,7 +54,7 @@ Create an environment file:
 cp .env.example .env.local
 ```
 
-For Phase 1, the app can run without real Supabase values because the UI uses mock data. Add real values when you create a Supabase project:
+Add your Supabase project values (required for login):
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
@@ -62,7 +62,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_DATA_SOURCE=mock
 ```
 
-`NEXT_PUBLIC_DATA_SOURCE=mock` is the safest local default. Set it to `supabase` after running the SQL schema, RLS policies, and seed data if you want the dashboard to read seeded products and persist campaign decisions in Supabase.
+`NEXT_PUBLIC_DATA_SOURCE=mock` keeps product/campaign UI on mock data. Set it to `supabase` after running the SQL files below. Login always requires Supabase Auth.
 
 Run the development server:
 
@@ -108,7 +108,9 @@ Create a Supabase project, then run these SQL files in order from the Supabase S
 
 1. `supabase/schema.sql`
 2. `supabase/rls.sql`
-3. `supabase/seed.sql`
+3. `supabase/auth.sql`
+4. `supabase/seed.sql`
+5. `supabase/seed-auth.sql` (after creating Auth users — see file comments)
 
 Schema includes:
 
@@ -182,10 +184,19 @@ NEXT_PUBLIC_DATA_SOURCE=supabase
 
 The MVP can deploy with `NEXT_PUBLIC_DATA_SOURCE=mock`, but the current Supabase demo mode is ready when the schema, seed, and RLS files have been applied.
 
+## Demo Auth Users
+
+Create these users in Supabase Authentication, then run `supabase/seed-auth.sql`:
+
+| Email | Role | Access |
+|-------|------|--------|
+| `admin@example.com` | SUPER_ADMIN | `/admin` |
+| `owner@example.com` | CUSTOMER_OWNER | `/app` (บ้านสวยออนไลน์) |
+| `staff@example.com` | CUSTOMER_STAFF | `/app` |
+
 ## Remaining Next Steps
 
-- Replace mock auth with Supabase Auth.
-- Move all customer/admin mutations behind authenticated Supabase users instead of the Phase 1 public demo policy.
+- Move all customer/admin mutations behind authenticated Supabase users (demo public RLS policies removed).
 - Expand Supabase repositories for campaigns, alerts, settings, and admin usage pages.
 - Add role-aware route protection for admin and customer dashboards.
 - Add product and campaign detail pages with full profit breakdown.

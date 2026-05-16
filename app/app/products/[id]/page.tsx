@@ -37,7 +37,7 @@ export default async function ProductDetailPage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
-        <CommerceCard title="SKU Profile">
+        <CommerceCard title="โปรไฟล์ SKU">
           <div className="flex items-start gap-3">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
               <Package size={24} />
@@ -49,11 +49,11 @@ export default async function ProductDetailPage({
           </div>
 
           <div className="mt-4 grid gap-2">
-            <StatBox label="Platform" value={platformLabel(product.platform)} />
-            <StatBox label="Store" value={store?.name ?? "Mock store"} />
-            <StatBox label="Data source" value={source} helper={error ? "Fallback from DB error" : undefined} />
+            <StatBox label="แพลตฟอร์ม" value={platformLabel(product.platform)} />
+            <StatBox label="ร้านค้า" value={store?.name ?? "ร้าน mock"} />
+            <StatBox label="แหล่งข้อมูล" value={source} helper={error ? "ใช้ mock หลัง query ล้มเหลว" : undefined} />
             <StatBox
-              label="Stock"
+              label="สต็อก"
               value={`${product.stock} ชิ้น`}
               tone={product.stock <= 10 ? "orange" : "blue"}
             />
@@ -70,7 +70,7 @@ export default async function ProductDetailPage({
 
           <ProfitBreakdown product={product} />
 
-          <CommerceCard title="Mock Marketplace Connection">
+          <CommerceCard title="การเชื่อมต่อ Marketplace (mock)">
             <div className="flex items-start gap-3 rounded-xl bg-sky-50 p-4">
               <Store className="shrink-0 text-blue-700" size={22} />
               <div>

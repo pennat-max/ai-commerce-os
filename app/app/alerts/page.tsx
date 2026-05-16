@@ -21,7 +21,7 @@ export default function AlertsPage() {
   const dangerCount = alerts.filter((alert) => alert.severity === "DANGER").length;
 
   return (
-    <AppShell title="Alerts" subtitle="LINE, Email และ Dashboard notification แบบ mock">
+    <AppShell title="แจ้งเตือน" subtitle="LINE, Email และ Dashboard notification แบบ mock">
       <div className="mb-4 grid gap-3 md:grid-cols-3">
         <StatBox label="แจ้งเตือนทั้งหมด" value={`${alerts.length}`} helper="mock channel" />
         <StatBox label="อันตราย" value={`${dangerCount}`} helper="ต้องดูทันที" tone="red" />

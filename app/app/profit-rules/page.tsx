@@ -6,7 +6,7 @@ import { formatBaht, formatPercent } from "@/lib/profit";
 
 export default function ProfitRulesPage() {
   return (
-    <AppShell title="Profit Rules" subtitle="ตั้งกำไรขั้นต่ำและ Margin ขั้นต่ำต่อสินค้า">
+    <AppShell title="กฎกำไร" subtitle="ตั้งกำไรขั้นต่ำและ Margin ขั้นต่ำต่อสินค้า">
       <div className="mb-4 grid gap-3 md:grid-cols-3">
         <StatBox label="กฎทั้งหมด" value={`${products.length}`} helper="ต่อ SKU" />
         <StatBox label="ค่าเฉลี่ยกำไรขั้นต่ำ" value="฿36" helper="จาก mock data" tone="green" />

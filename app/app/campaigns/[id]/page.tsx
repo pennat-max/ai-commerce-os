@@ -40,7 +40,7 @@ export default async function CampaignDetailPage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
-        <CommerceCard title="Campaign Profile">
+        <CommerceCard title="โปรไฟล์แคมเปญ">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-xl font-black text-slate-950">{campaign.name}</h2>
@@ -57,31 +57,31 @@ export default async function CampaignDetailPage({
               <p className="text-sm font-black text-slate-900">
                 {campaign.startsAt} ถึง {campaign.endsAt}
               </p>
-              <p className="mt-1 text-xs font-bold text-slate-500">Manual Mode approval only</p>
+              <p className="mt-1 text-xs font-bold text-slate-500">อนุมัติแบบ Manual Mode เท่านั้น</p>
             </div>
           </div>
 
           <div className="mt-4 grid gap-2">
-            <StatBox label="Campaign discount" value={formatBaht(campaign.campaignDiscount)} />
-            <StatBox label="Shop voucher" value={formatBaht(campaign.shopVoucher)} />
-            <StatBox label="Coins cashback" value={formatBaht(campaign.coinsCashback)} />
-            <StatBox label="Shipping subsidy" value={formatBaht(campaign.shippingSubsidy)} />
+            <StatBox label="ส่วนลดแคมเปญ" value={formatBaht(campaign.campaignDiscount)} />
+            <StatBox label="Voucher ร้าน" value={formatBaht(campaign.shopVoucher)} />
+            <StatBox label="Coins / Cashback" value={formatBaht(campaign.coinsCashback)} />
+            <StatBox label="ส่วนลดค่าส่ง" value={formatBaht(campaign.shippingSubsidy)} />
           </div>
         </CommerceCard>
 
         <div className="grid gap-4">
           <ProfitBreakdown product={product} campaign={campaign} />
 
-          <CommerceCard title="Approval Guidance">
-            <div className="grid gap-3 md:grid-cols-3">
-              <button className="min-h-12 rounded-lg border border-emerald-200 bg-emerald-500/90 text-sm font-black text-white">
-                Approve
+          <CommerceCard title="คำแนะนำการอนุมัติ">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
+              <button type="button" className="min-h-12 rounded-xl border border-emerald-200 bg-emerald-600 text-sm font-black text-white active:scale-[0.98]">
+                อนุมัติ
               </button>
-              <button className="min-h-12 rounded-lg border border-orange-200 bg-orange-400 text-sm font-black text-white">
-                Watch
+              <button type="button" className="min-h-12 rounded-xl border border-orange-200 bg-orange-500 text-sm font-black text-white active:scale-[0.98]">
+                เฝ้าดู
               </button>
-              <button className="min-h-12 rounded-lg border border-rose-200 bg-rose-500/90 text-sm font-black text-white">
-                Reject
+              <button type="button" className="min-h-12 rounded-xl border border-rose-200 bg-rose-600 text-sm font-black text-white active:scale-[0.98]">
+                ปฏิเสธ
               </button>
             </div>
             <div className="mt-4 flex items-start gap-3 rounded-xl bg-slate-100 p-4">
