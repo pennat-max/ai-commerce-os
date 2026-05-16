@@ -6,6 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "@/components/status";
 import { StatBox } from "@/components/commerce-card";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
+import { saveCampaignDecisionAction } from "@/lib/client-db";
 import { formatBaht, formatPercent } from "@/lib/profit";
 import type { Campaign, DecisionAction, Product } from "@/types/domain";
 
@@ -55,14 +56,26 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
     }
   });
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [syncState, setSyncState] = useState<Record<string, string>>({});
 
-  function setDecision(campaignId: string, action: DecisionAction) {
+  async function setDecision(campaignId: string, action: DecisionAction) {
     setActions((current) => {
       const next = { ...current, [campaignId]: action };
       window.localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
     setLastUpdated(campaignId);
+    setSyncState((current) => ({ ...current, [campaignId]: "กำลังบันทึก..." }));
+
+    const result = await saveCampaignDecisionAction(campaignId, action);
+    setSyncState((current) => ({
+      ...current,
+      [campaignId]: result.ok
+        ? "บันทึกลง Supabase แล้ว"
+        : result.source === "mock"
+          ? "บันทึก mock ใน browser"
+          : `บันทึก DB ไม่สำเร็จ: ${result.error}`,
+    }));
   }
 
   return (
@@ -103,7 +116,7 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
               {lastUpdated === campaign.id ? (
                 <span className="flex items-center gap-1 text-xs font-bold text-slate-500">
                   <CheckCircle2 size={14} className="text-emerald-600" />
-                  บันทึก mock แล้ว
+                  {syncState[campaign.id] ?? "บันทึก mock แล้ว"}
                 </span>
               ) : null}
             </div>

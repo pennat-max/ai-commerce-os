@@ -5,7 +5,8 @@ import { AppShell } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { ProfitBreakdown } from "@/components/profit-breakdown";
 import { platformLabel } from "@/components/status";
-import { products, stores } from "@/lib/mock-data";
+import { products } from "@/lib/mock-data";
+import { getProductById, listStores } from "@/lib/repositories";
 import { formatBaht, formatPercent } from "@/lib/profit";
 
 export function generateStaticParams() {
@@ -18,10 +19,10 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = products.find((item) => item.id === id);
+  const { data: product, source, error } = await getProductById(id);
   if (!product) notFound();
 
-  const store = stores.find((item) => item.id === product.storeId);
+  const store = listStores().find((item) => item.id === product.storeId);
 
   return (
     <AppShell title="รายละเอียดสินค้า" subtitle="ดูต้นทุน กำไร และความเสี่ยงราย SKU">
@@ -50,6 +51,7 @@ export default async function ProductDetailPage({
           <div className="mt-4 grid gap-2">
             <StatBox label="Platform" value={platformLabel(product.platform)} />
             <StatBox label="Store" value={store?.name ?? "Mock store"} />
+            <StatBox label="Data source" value={source} helper={error ? "Fallback from DB error" : undefined} />
             <StatBox
               label="Stock"
               value={`${product.stock} ชิ้น`}

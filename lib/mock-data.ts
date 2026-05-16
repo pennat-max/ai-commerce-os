@@ -3,8 +3,8 @@ import { calculateProfit, formatBaht } from "@/lib/profit";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 
 export const organizations = [
-  { id: "org-1", name: "บ้านสวยออนไลน์", owner: "คุณเมย์", plan: "Growth", stores: 3 },
-  { id: "org-2", name: "Gadget Hub TH", owner: "คุณนนท์", plan: "Starter", stores: 2 },
+  { id: "10000000-0000-0000-0000-000000000001", name: "บ้านสวยออนไลน์", owner: "คุณเมย์", plan: "Growth", stores: 3 },
+  { id: "10000000-0000-0000-0000-000000000002", name: "Gadget Hub TH", owner: "คุณนนท์", plan: "Starter", stores: 2 },
   { id: "org-3", name: "Mango Beauty", owner: "คุณแพร", plan: "Scale", stores: 5 },
 ];
 
@@ -15,16 +15,16 @@ export const plans = [
 ];
 
 export const stores = [
-  { id: "store-1", organizationId: "org-1", name: "Shopee บ้านสวย", platform: "shopee" },
-  { id: "store-2", organizationId: "org-1", name: "Lazada บ้านสวย", platform: "lazada" },
-  { id: "store-3", organizationId: "org-1", name: "TikTok บ้านสวย", platform: "tiktok" },
+  { id: "20000000-0000-0000-0000-000000000001", organizationId: "10000000-0000-0000-0000-000000000001", name: "Shopee บ้านสวย", platform: "shopee" },
+  { id: "20000000-0000-0000-0000-000000000002", organizationId: "10000000-0000-0000-0000-000000000001", name: "Lazada บ้านสวย", platform: "lazada" },
+  { id: "20000000-0000-0000-0000-000000000003", organizationId: "10000000-0000-0000-0000-000000000001", name: "TikTok บ้านสวย", platform: "tiktok" },
 ];
 
 export const products: Product[] = [
   {
-    id: "prd-1",
-    organizationId: "org-1",
-    storeId: "store-1",
+    id: "30000000-0000-0000-0000-000000000001",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    storeId: "20000000-0000-0000-0000-000000000001",
     sku: "HOME-LED-01",
     name: "โคมไฟ LED ตั้งโต๊ะ",
     platform: "shopee",
@@ -41,9 +41,9 @@ export const products: Product[] = [
     minMarginPercent: 16,
   },
   {
-    id: "prd-2",
-    organizationId: "org-1",
-    storeId: "store-2",
+    id: "30000000-0000-0000-0000-000000000002",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    storeId: "20000000-0000-0000-0000-000000000002",
     sku: "HOME-BOX-02",
     name: "กล่องเก็บของพับได้",
     platform: "lazada",
@@ -60,9 +60,9 @@ export const products: Product[] = [
     minMarginPercent: 15,
   },
   {
-    id: "prd-3",
-    organizationId: "org-1",
-    storeId: "store-3",
+    id: "30000000-0000-0000-0000-000000000003",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    storeId: "20000000-0000-0000-0000-000000000003",
     sku: "HOME-MOP-03",
     name: "ม็อบรีดน้ำ 360 องศา",
     platform: "tiktok",
@@ -79,9 +79,9 @@ export const products: Product[] = [
     minMarginPercent: 14,
   },
   {
-    id: "prd-4",
-    organizationId: "org-1",
-    storeId: "store-1",
+    id: "30000000-0000-0000-0000-000000000004",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    storeId: "20000000-0000-0000-0000-000000000001",
     sku: "HOME-RACK-04",
     name: "ชั้นวางของติดผนัง",
     platform: "shopee",
@@ -101,9 +101,9 @@ export const products: Product[] = [
 
 export const campaigns: Campaign[] = [
   {
-    id: "cmp-1",
-    organizationId: "org-1",
-    productId: "prd-1",
+    id: "40000000-0000-0000-0000-000000000001",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    productId: "30000000-0000-0000-0000-000000000001",
     name: "Shopee Flash Sale 6.6",
     campaignDiscount: 20,
     shopVoucher: 10,
@@ -113,9 +113,9 @@ export const campaigns: Campaign[] = [
     endsAt: "2026-06-07",
   },
   {
-    id: "cmp-2",
-    organizationId: "org-1",
-    productId: "prd-2",
+    id: "40000000-0000-0000-0000-000000000002",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    productId: "30000000-0000-0000-0000-000000000002",
     name: "Lazada Payday Boost",
     campaignDiscount: 18,
     shopVoucher: 8,
@@ -125,9 +125,9 @@ export const campaigns: Campaign[] = [
     endsAt: "2026-05-26",
   },
   {
-    id: "cmp-3",
-    organizationId: "org-1",
-    productId: "prd-3",
+    id: "40000000-0000-0000-0000-000000000003",
+    organizationId: "10000000-0000-0000-0000-000000000001",
+    productId: "30000000-0000-0000-0000-000000000003",
     name: "TikTok Live Mega Deal",
     campaignDiscount: 45,
     shopVoucher: 20,

@@ -226,3 +226,30 @@ create policy "alerts_update_read_state"
 on alerts for update
 using (is_super_admin() or is_org_member(organization_id))
 with check (is_super_admin() or is_org_member(organization_id));
+
+-- Phase 1 demo-only policies. These let the public MVP read seeded rows and update
+-- campaign decisions for the seeded demo organization before full Supabase Auth is enabled.
+create policy "demo_public_products_read_seed_org"
+on products for select
+using (organization_id = '10000000-0000-0000-0000-000000000001');
+
+create policy "demo_public_stores_read_seed_org"
+on stores for select
+using (organization_id = '10000000-0000-0000-0000-000000000001');
+
+create policy "demo_public_campaigns_read_seed_org"
+on campaigns for select
+using (organization_id = '10000000-0000-0000-0000-000000000001');
+
+create policy "demo_public_campaign_decisions_read_seed_org"
+on campaign_decisions for select
+using (organization_id = '10000000-0000-0000-0000-000000000001');
+
+create policy "demo_public_campaign_decisions_update_seed_org"
+on campaign_decisions for update
+using (organization_id = '10000000-0000-0000-0000-000000000001')
+with check (organization_id = '10000000-0000-0000-0000-000000000001');
+
+create policy "demo_public_alerts_read_seed_org"
+on alerts for select
+using (organization_id = '10000000-0000-0000-0000-000000000001');

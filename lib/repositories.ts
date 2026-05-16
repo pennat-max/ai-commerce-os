@@ -77,6 +77,22 @@ export async function listProducts(
   return { data: ((data ?? []) as ProductRow[]).map(mapProduct), source: "supabase" };
 }
 
+export async function getProductById(id: string): Promise<RepositoryResult<Product | null>> {
+  const mockProduct = mockProducts.find((product) => product.id === id) ?? null;
+
+  if (!useSupabaseData || !supabase) {
+    return { data: mockProduct, source: "mock" };
+  }
+
+  const { data, error } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+
+  if (error) {
+    return { data: mockProduct, source: "mock", error: error.message };
+  }
+
+  return { data: data ? mapProduct(data as ProductRow) : mockProduct, source: data ? "supabase" : "mock" };
+}
+
 export async function getDatabaseStatus() {
   if (!supabase) {
     return {
