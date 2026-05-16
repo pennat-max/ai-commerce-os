@@ -66,15 +66,10 @@ create trigger on_auth_user_created
 
 alter table commerce_profiles enable row level security;
 
-create policy "commerce_profiles_self_or_super_admin_select"
+create policy "commerce_profiles_select_self"
 on commerce_profiles for select
-using (
-  id = auth.uid()
-  or exists (
-    select 1 from commerce_profiles cp
-    where cp.id = auth.uid() and cp.role = 'SUPER_ADMIN'
-  )
-);
+to authenticated
+using (id = auth.uid());
 
 create policy "commerce_profiles_insert_self"
 on commerce_profiles for insert

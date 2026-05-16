@@ -43,7 +43,11 @@ export function LoginForm() {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        setMessage(error.message);
+        setMessage(
+          error.message === "Invalid login credentials"
+            ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+            : error.message,
+        );
         return;
       }
 
