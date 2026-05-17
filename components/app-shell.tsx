@@ -94,32 +94,10 @@ export function AppShell({
     <div
       className={
         premiumMobileFrame
-          ? "min-h-screen bg-slate-950 text-slate-950 md:bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#ecfdf5_28%,#f8fafc_62%,#f5f3ff_100%)]"
+          ? "min-h-screen bg-[radial-gradient(circle_at_top_left,#eff6ff_0,#ecfdf5_26%,#fbfdff_58%,#faf5ff_100%)] text-slate-950"
           : "min-h-screen bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#ecfdf5_28%,#f8fafc_62%,#f5f3ff_100%)] text-slate-950"
       }
     >
-      {premiumMobileFrame ? (
-        <div className="flex h-[4.2rem] items-center justify-between px-8 pt-2 text-white md:hidden" aria-hidden="true">
-          <span className="text-lg font-black tracking-normal">9:41</span>
-          <span className="flex items-center gap-2">
-            <span className="flex h-5 items-end gap-1">
-              <span className="h-2 w-1 rounded-full bg-white/70" />
-              <span className="h-3 w-1 rounded-full bg-white/80" />
-              <span className="h-4 w-1 rounded-full bg-white/90" />
-              <span className="h-5 w-1 rounded-full bg-white" />
-            </span>
-            <span className="relative block size-5">
-              <span className="absolute left-1/2 top-0 h-4 w-5 -translate-x-1/2 rounded-t-full border-[2px] border-b-0 border-white" />
-              <span className="absolute left-1/2 top-1.5 h-3 w-3.5 -translate-x-1/2 rounded-t-full border-[2px] border-b-0 border-white" />
-              <span className="absolute bottom-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-white" />
-            </span>
-            <span className="flex h-4 w-7 items-center rounded-[0.32rem] border border-white/80 p-0.5">
-              <span className="h-full w-5 rounded-[0.2rem] bg-white" />
-            </span>
-          </span>
-        </div>
-      ) : null}
-
       <aside
         className={
           premiumMobileFrame
@@ -142,7 +120,7 @@ export function AppShell({
       <main
         className={
           premiumMobileFrame
-            ? "min-h-[calc(100vh-4.2rem)] rounded-t-[2rem] bg-[radial-gradient(circle_at_top_left,#eff6ff_0,#ecfdf5_26%,#fbfdff_58%,#faf5ff_100%)] pb-[calc(8rem+var(--safe-bottom))] md:ml-64 md:min-h-screen md:rounded-none md:pb-0"
+            ? "min-h-screen bg-[radial-gradient(circle_at_top_left,#eff6ff_0,#ecfdf5_26%,#fbfdff_58%,#faf5ff_100%)] pb-[calc(8rem+var(--safe-bottom))] md:ml-64 md:pb-0"
             : "pb-[calc(7.25rem+var(--safe-bottom))] md:ml-64 md:pb-0"
         }
       >
