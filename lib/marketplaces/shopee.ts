@@ -1,4 +1,11 @@
-import type { MarketplaceAdapter, MarketplaceCredentials, SyncProductInput, SyncResult } from "@/lib/marketplaces/types";
+import { mockDiscoverCampaigns } from "@/lib/marketplaces/mock-campaigns";
+import type {
+  MarketplaceAdapter,
+  MarketplaceCredentials,
+  SyncProductInput,
+  SyncResult,
+} from "@/lib/marketplaces/types";
+import type { Product } from "@/types/domain";
 
 export const shopeeAdapter: MarketplaceAdapter = {
   platform: "shopee",
@@ -31,6 +38,31 @@ export const shopeeAdapter: MarketplaceAdapter = {
       mode: "live",
       synced: items.length,
       message: `Synced ${items.length} products (scaffold)`,
+    };
+  },
+
+  async scanCampaigns(credentials, products: Product[]) {
+    const live = Boolean(credentials.partnerId && credentials.accessToken);
+    const campaigns = mockDiscoverCampaigns("shopee", products);
+
+    if (!live) {
+      return {
+        platform: "shopee",
+        ok: true,
+        mode: "mock" as const,
+        discovered: campaigns.length,
+        message: `Mock scan พบ ${campaigns.length} แคมเปญ Shopee`,
+        campaigns,
+      };
+    }
+
+    return {
+      platform: "shopee",
+      ok: true,
+      mode: "live" as const,
+      discovered: campaigns.length,
+      message: `Scanned Shopee (scaffold) · ${campaigns.length} campaigns`,
+      campaigns,
     };
   },
 };

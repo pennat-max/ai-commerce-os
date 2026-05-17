@@ -213,8 +213,22 @@ Set optional env vars in `.env.local` / Vercel:
 | `CRON_SECRET` | เรียก `POST /api/notifications/dispatch` action `process_queue` |
 | `SHOPEE_*` / `LAZADA_*` / `TIKTOK_*` | Marketplace sync (scaffold → live API) |
 
+### Campaign auto-scan (every 15 minutes)
+
+Vercel Cron calls `GET /api/cron/scan-campaigns` every **15 minutes** (`vercel.json`).
+
+Required env on Vercel:
+
+- `CRON_SECRET` — Vercel sends `Authorization: Bearer <CRON_SECRET>`
+- `SUPABASE_SERVICE_ROLE_KEY` — scan all organizations (server-side only)
+
+Manual scan: `/app/campaigns` → **สแกนตอนนี้**
+
+Until marketplace APIs are live, scan uses **mock discovery** per platform (Shopee/Lazada/TikTok) from your SKU list, then recalculates profit and creates DANGER alerts.
+
 ### New routes
 
+- `GET /api/cron/scan-campaigns` — สแกนแคมเปญทุก org (cron)
 - `POST /api/notifications/dispatch` — ส่ง/ประมวลคิวแจ้งเตือน
 - `POST /api/webhooks/line` — รับ LINE webhook
 - `POST /api/marketplaces/{platform}/sync` — ซิงก์ SKU

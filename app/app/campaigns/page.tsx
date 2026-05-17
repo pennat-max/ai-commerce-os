@@ -1,12 +1,21 @@
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 import { AppShell, ModeSwitch } from "@/components/app-shell";
+import { CampaignScanPanel } from "@/components/campaign-scan-panel";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { CampaignDecisionList } from "@/components/campaign-decision-list";
+import { getLastCampaignScan } from "@/lib/campaigns/scanner";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
+import { getAppSession, resolveOrganizationId } from "@/lib/auth/session";
 import { listCampaigns, listProducts } from "@/lib/repositories";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function CampaignsPage() {
+  const session = await getAppSession();
+  const supabase = await createClient();
+  const orgId = resolveOrganizationId(session);
+  const lastScan = supabase ? await getLastCampaignScan(supabase, orgId) : null;
+
   const [{ data: products, source: productSource }, { data: campaigns, source: campaignSource }] =
     await Promise.all([listProducts(), listCampaigns()]);
 
@@ -22,6 +31,10 @@ export default async function CampaignsPage() {
 
   return (
     <AppShell title="แคมเปญและการตัดสินใจ" subtitle={`อนุมัติแบบ Manual Mode · ${source}`}>
+      <div className="mb-4">
+        <CampaignScanPanel lastScan={lastScan} />
+      </div>
+
       <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-3 md:grid-cols-3">
           <StatBox label="รอ Manual Approval" value={`${decisions.length}`} helper="Phase 1" />

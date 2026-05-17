@@ -1,4 +1,11 @@
-import type { MarketplaceAdapter, MarketplaceCredentials, SyncProductInput, SyncResult } from "@/lib/marketplaces/types";
+import { mockDiscoverCampaigns } from "@/lib/marketplaces/mock-campaigns";
+import type {
+  MarketplaceAdapter,
+  MarketplaceCredentials,
+  SyncProductInput,
+  SyncResult,
+} from "@/lib/marketplaces/types";
+import type { Product } from "@/types/domain";
 
 export const lazadaAdapter: MarketplaceAdapter = {
   platform: "lazada",
@@ -18,6 +25,18 @@ export const lazadaAdapter: MarketplaceAdapter = {
       mode: "mock",
       synced: items.length,
       message: `Mock sync ${items.length} SKU ไป Lazada`,
+    };
+  },
+
+  async scanCampaigns(_credentials, products: Product[]) {
+    const campaigns = mockDiscoverCampaigns("lazada", products);
+    return {
+      platform: "lazada",
+      ok: true,
+      mode: "mock" as const,
+      discovered: campaigns.length,
+      message: `Mock scan พบ ${campaigns.length} แคมเปญ Lazada`,
+      campaigns,
     };
   },
 };

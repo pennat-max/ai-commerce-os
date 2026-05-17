@@ -36,7 +36,7 @@ function toNumber(value: unknown) {
   return typeof value === "number" ? value : Number(value ?? 0);
 }
 
-type ProductRow = {
+export type ProductRow = {
   id: string;
   organization_id: string;
   store_id: string;
@@ -86,7 +86,7 @@ type AlertRow = {
   is_read: boolean;
 };
 
-function mapProduct(row: ProductRow): Product {
+export function mapProduct(row: ProductRow): Product {
   return {
     id: row.id,
     organizationId: row.organization_id,

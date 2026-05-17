@@ -18,6 +18,6 @@ test.describe("login flow", () => {
     await page.getByRole("button", { name: "เข้าสู่ระบบ" }).click();
 
     await expect(page).toHaveURL(/\/app/, { timeout: 30000 });
-    await expect(page.getByText("ภาพรวมร้านค้า")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ภาพรวมร้านค้า", level: 1 })).toBeVisible();
   });
 });
