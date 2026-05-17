@@ -478,6 +478,136 @@ export async function markAlertRead(alertId: string): Promise<{ ok: boolean; err
   return { ok: true };
 }
 
+export type CreateProductInput = {
+  storeId: string;
+  sku: string;
+  name: string;
+  platform: Platform;
+  cost: number;
+  sellingPrice: number;
+  stock: number;
+  minProfit: number;
+  minMarginPercent: number;
+};
+
+export type CreateCampaignInput = {
+  productId: string;
+  name: string;
+  campaignDiscount: number;
+  shopVoucher: number;
+  coinsCashback: number;
+  shippingSubsidy: number;
+  startsAt: string;
+  endsAt: string;
+};
+
+export async function createProduct(
+  input: CreateProductInput,
+  organizationId?: string,
+): Promise<{ ok: boolean; productId?: string; error?: string }> {
+  const session = await getAppSession();
+  if (!session) return { ok: false, error: "ไม่ได้เข้าสู่ระบบ" };
+
+  const orgId = resolveOrganizationId(session, organizationId);
+
+  if (!useSupabaseData) {
+    return { ok: true, productId: `mock-${Date.now()}` };
+  }
+
+  const supabase = await createClient();
+  if (!supabase) return { ok: false, error: "Supabase ไม่พร้อม" };
+
+  const { data, error } = await supabase
+    .from("products")
+    .insert({
+      organization_id: orgId,
+      store_id: input.storeId,
+      sku: input.sku,
+      name: input.name,
+      platform: input.platform,
+      cost: input.cost,
+      selling_price: input.sellingPrice,
+      stock: input.stock,
+      shipping_cost: 0,
+      platform_fee_percent: 6,
+      ads_cost: 0,
+      affiliate_commission_percent: 0,
+      packaging_cost: 0,
+      other_cost: 0,
+      min_profit: input.minProfit,
+      min_margin_percent: input.minMarginPercent,
+    })
+    .select("id")
+    .single();
+
+  if (error) return { ok: false, error: error.message };
+
+  await supabase.from("profit_rules").insert({
+    organization_id: orgId,
+    product_id: data.id,
+    min_profit: input.minProfit,
+    min_margin_percent: input.minMarginPercent,
+  });
+
+  return { ok: true, productId: data.id as string };
+}
+
+export async function createCampaign(
+  input: CreateCampaignInput,
+  organizationId?: string,
+): Promise<{ ok: boolean; campaignId?: string; error?: string }> {
+  const session = await getAppSession();
+  if (!session) return { ok: false, error: "ไม่ได้เข้าสู่ระบบ" };
+
+  const orgId = resolveOrganizationId(session, organizationId);
+
+  if (!useSupabaseData) {
+    return { ok: true, campaignId: `mock-c-${Date.now()}` };
+  }
+
+  const supabase = await createClient();
+  if (!supabase) return { ok: false, error: "Supabase ไม่พร้อม" };
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("id, cost, selling_price, min_profit, min_margin_percent")
+    .eq("id", input.productId)
+    .maybeSingle();
+
+  if (!product) return { ok: false, error: "ไม่พบสินค้า" };
+
+  const { data: campaign, error: campaignError } = await supabase
+    .from("campaigns")
+    .insert({
+      organization_id: orgId,
+      product_id: input.productId,
+      name: input.name,
+      campaign_discount: input.campaignDiscount,
+      shop_voucher: input.shopVoucher,
+      coins_cashback: input.coinsCashback,
+      shipping_subsidy: input.shippingSubsidy,
+      starts_at: input.startsAt,
+      ends_at: input.endsAt,
+    })
+    .select("id")
+    .single();
+
+  if (campaignError) return { ok: false, error: campaignError.message };
+
+  await supabase.from("campaign_decisions").insert({
+    organization_id: orgId,
+    campaign_id: campaign.id,
+    product_id: input.productId,
+    recommendation: "WARNING",
+    action: "watch",
+    net_profit: 0,
+    margin_percent: 0,
+    note: "สร้างแคมเปญใหม่ — รอการตัดสินใจ",
+  });
+
+  return { ok: true, campaignId: campaign.id as string };
+}
+
 export async function getDatabaseStatus() {
   if (!isSupabaseConfigured()) {
     return {

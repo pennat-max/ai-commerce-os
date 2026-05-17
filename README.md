@@ -202,9 +202,34 @@ Create these users in Supabase Authentication, then run `supabase/seed-auth.sql`
 | `owner@example.com` | CUSTOMER_OWNER | `/app` (บ้านสวยออนไลน์) |
 | `staff@example.com` | CUSTOMER_STAFF | `/app` |
 
-## Remaining Next Steps (Phase 2+)
+## Phase 2+ Integrations
 
-- Real LINE / Email notification delivery
-- Shopee, Lazada, and TikTok Shop API integrations
-- Auto Mode (automated campaign actions)
-- Custom domain and E2E tests
+Set optional env vars in `.env.local` / Vercel:
+
+| Variable | Purpose |
+|----------|---------|
+| `LINE_NOTIFY_TOKEN` | ส่งแจ้งเตือน LINE Notify จริง |
+| `RESEND_API_KEY` + `ALERT_EMAIL_TO` | ส่งอีเมลจริง |
+| `CRON_SECRET` | เรียก `POST /api/notifications/dispatch` action `process_queue` |
+| `SHOPEE_*` / `LAZADA_*` / `TIKTOK_*` | Marketplace sync (scaffold → live API) |
+
+### New routes
+
+- `POST /api/notifications/dispatch` — ส่ง/ประมวลคิวแจ้งเตือน
+- `POST /api/webhooks/line` — รับ LINE webhook
+- `POST /api/marketplaces/{platform}/sync` — ซิงก์ SKU
+- `/app/products/new` · `/app/campaigns/new` — CRUD
+
+### E2E
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+## Remaining (Phase 3)
+
+- Shopee/Lazada/TikTok live API calls (credentials + partner onboarding)
+- Auto Mode (automated marketplace actions)
+- Custom domain

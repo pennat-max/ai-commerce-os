@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
 import { AppShell, ModeSwitch } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
@@ -33,10 +34,18 @@ export default async function CampaignsPage() {
       <CommerceCard
         title="คิวตัดสินใจแคมเปญ"
         action={
-          <span className="flex items-center gap-2 rounded-lg bg-slate-200 px-3 py-2 text-xs font-black text-slate-500">
-            <LockKeyhole size={14} />
-            Auto Mode ปิดอยู่
-          </span>
+          <div className="flex gap-2">
+            <Link
+              href="/app/campaigns/new"
+              className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-black text-white"
+            >
+              + แคมเปญ
+            </Link>
+            <span className="flex items-center gap-2 rounded-lg bg-slate-200 px-3 py-2 text-xs font-black text-slate-500">
+              <LockKeyhole size={14} />
+              Manual
+            </span>
+          </div>
         }
       >
         <CampaignDecisionList campaigns={campaigns} products={products} />

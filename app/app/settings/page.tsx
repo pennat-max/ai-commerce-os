@@ -1,4 +1,5 @@
 import { LockKeyhole, ShieldCheck, Store, Users } from "lucide-react";
+import { MarketplaceSyncPanel } from "@/components/marketplace-sync-panel";
 import { AppShell } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { platformLabel } from "@/components/status";
@@ -84,6 +85,10 @@ export default async function SettingsPage() {
                 </div>
               ))}
             </div>
+          </CommerceCard>
+
+          <CommerceCard title="ซิงก์ Marketplace">
+            <MarketplaceSyncPanel />
           </CommerceCard>
 
           <CommerceCard title="โหมด Auto">

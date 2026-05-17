@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, PackageCheck, Search } from "lucide-react";
+import { AlertTriangle, PackageCheck } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { StatusBadge, platformLabel } from "@/components/status";
@@ -32,10 +32,12 @@ export default async function ProductsPage() {
       <CommerceCard
         title="รายการสินค้า"
         action={
-          <button className="flex min-h-10 items-center gap-2 rounded-lg bg-blue-600 px-3 text-xs font-black text-white">
-            <Search size={15} />
-            ค้นหา
-          </button>
+          <Link
+            href="/app/products/new"
+            className="flex min-h-10 items-center gap-2 rounded-lg bg-emerald-700 px-3 text-xs font-black text-white"
+          >
+            + เพิ่มสินค้า
+          </Link>
         }
       >
         <div className="grid gap-3">

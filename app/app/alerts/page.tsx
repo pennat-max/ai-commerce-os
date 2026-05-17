@@ -1,7 +1,7 @@
-import { Send } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AlertsList } from "@/components/alerts-list";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
+import { SendNotificationButton } from "@/components/send-notification-button";
 import { listAlerts } from "@/lib/repositories";
 
 export default async function AlertsPage() {
@@ -20,10 +20,11 @@ export default async function AlertsPage() {
       <CommerceCard
         title="การแจ้งเตือนล่าสุด"
         action={
-          <span className="flex min-h-10 items-center gap-2 rounded-lg bg-slate-200 px-3 text-xs font-black text-slate-500">
-            <Send size={15} />
-            LINE จริง — Phase 2
-          </span>
+          <SendNotificationButton
+            channel="line"
+            title="ทดสอบ AI Commerce OS"
+            message="แจ้งเตือนทดสอบจากหน้า Alerts"
+          />
         }
       >
         <AlertsList alerts={alerts} />
