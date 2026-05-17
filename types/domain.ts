@@ -57,3 +57,45 @@ export type DashboardMetric = {
   tone: "green" | "yellow" | "red" | "blue";
   helper: string;
 };
+
+export type Store = {
+  id: string;
+  organizationId: string;
+  name: string;
+  platform: Platform;
+};
+
+export type Alert = {
+  id: string;
+  organizationId: string;
+  channel: AlertChannel;
+  severity: DecisionStatus;
+  title: string;
+  message: string;
+  isRead: boolean;
+};
+
+export type OrganizationSummary = {
+  id: string;
+  name: string;
+  owner: string;
+  plan: string;
+  stores: number;
+  usagePercent: number;
+};
+
+export type PlanSummary = {
+  id: string;
+  name: string;
+  price: number;
+  stores: number;
+  decisions: number;
+};
+
+export type OrgMember = {
+  id: string;
+  profileId: string;
+  fullName: string;
+  email: string;
+  role: UserRole;
+};

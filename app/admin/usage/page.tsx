@@ -1,19 +1,23 @@
 import { AppShell, SectionTitle } from "@/components/app-shell";
-import { organizations } from "@/lib/mock-data";
+import { listOrganizations } from "@/lib/repositories";
 
-export default function UsagePage() {
+export default async function UsagePage() {
+  const { data: organizations, source } = await listOrganizations();
+
   return (
-    <AppShell mode="admin" title="การใช้งาน" subtitle="ติดตาม quota แจ้งเตือน ร้านค้า และปริมาณการตัดสินใจแคมเปญ">
+    <AppShell mode="admin" title="การใช้งาน" subtitle={`ติดตาม quota และการตัดสินใจ · ${source}`}>
       <SectionTitle title="การใช้งานตามองค์กร" />
       <div className="grid gap-3">
-        {organizations.map((organization, index) => {
-          const usage = [72, 44, 86][index];
+        {organizations.map((organization) => {
+          const usage = organization.usagePercent;
           return (
             <article key={organization.id} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="font-black">{organization.name}</h2>
-                  <p className="text-sm text-slate-600">{organization.plan} · {organization.stores} ร้าน</p>
+                  <p className="text-sm text-slate-600">
+                    {organization.plan} · {organization.stores} ร้าน
+                  </p>
                 </div>
                 <p className="text-xl font-black">{usage}%</p>
               </div>

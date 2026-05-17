@@ -1,12 +1,18 @@
 import { AppShell, SectionTitle } from "@/components/app-shell";
-import { organizations } from "@/lib/mock-data";
+import { listOrganizations } from "@/lib/repositories";
 
-export default function CustomersPage() {
+export default async function CustomersPage() {
+  const { data: organizations, source } = await listOrganizations();
+
   return (
-    <AppShell mode="admin" title="ลูกค้า" subtitle="จัดการองค์กร ลูกค้า ร้านค้า และ subscription">
+    <AppShell mode="admin" title="ลูกค้า" subtitle={`จัดการองค์กรและ subscription · ${source}`}>
       <SectionTitle
         title="องค์กรลูกค้า"
-        action={<button className="min-h-11 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white">เพิ่มลูกค้า</button>}
+        action={
+          <button className="min-h-11 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white">
+            เพิ่มลูกค้า
+          </button>
+        }
       />
       <div className="grid gap-3">
         {organizations.map((organization) => (
@@ -21,9 +27,18 @@ export default function CustomersPage() {
               </span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
-              <div><p className="text-slate-500">Plan</p><p className="font-black">{organization.plan}</p></div>
-              <div><p className="text-slate-500">Stores</p><p className="font-black">{organization.stores}</p></div>
-              <div><p className="text-slate-500">Usage</p><p className="font-black">72%</p></div>
+              <div>
+                <p className="text-slate-500">Plan</p>
+                <p className="font-black">{organization.plan}</p>
+              </div>
+              <div>
+                <p className="text-slate-500">Stores</p>
+                <p className="font-black">{organization.stores}</p>
+              </div>
+              <div>
+                <p className="text-slate-500">Usage</p>
+                <p className="font-black">{organization.usagePercent}%</p>
+              </div>
             </div>
           </article>
         ))}

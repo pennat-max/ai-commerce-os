@@ -2,7 +2,7 @@ import { AlertTriangle, ArrowUpRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { AppShell, RiskCallout, StorePill } from "@/components/app-shell";
 import { QuickActions } from "@/components/quick-actions";
-import { campaigns, products } from "@/lib/mock-data";
+import { listCampaigns, listProducts } from "@/lib/repositories";
 import { calculateProfit, formatBaht } from "@/lib/profit";
 
 const salesBars = [30, 42, 36, 58, 48, 65, 52, 76, 68, 92, 74, 86];
@@ -14,11 +14,7 @@ function MiniChart() {
     <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 p-2">
       <div className="grid grid-cols-12 items-end gap-1">
         {salesBars.map((height, index) => (
-          <span
-            key={index}
-            className="rounded-t bg-emerald-300"
-            style={{ height: `${height * 0.42}px` }}
-          />
+          <span key={index} className="rounded-t bg-emerald-300" style={{ height: `${height * 0.42}px` }} />
         ))}
       </div>
       <svg className="mt-2 h-10 w-full" viewBox="0 0 160 90" aria-hidden="true">
@@ -34,7 +30,6 @@ function ProfitChart() {
     <div className="mt-3 rounded-xl bg-slate-50 p-2">
       <svg className="h-20 w-full sm:h-24" viewBox="0 0 180 100" aria-hidden="true">
         <path d="M0 95 L0 18 L180 18" fill="none" stroke="#e2e8f0" strokeWidth="1" />
-        <path d="M0 72 L180 72 M0 48 L180 48 M0 24 L180 24" stroke="#eef2f7" strokeWidth="1" />
         <path
           d="M4 88 C18 78 20 48 34 58 S52 82 66 50 S86 20 102 38 S120 60 136 32 S156 18 176 26"
           fill="none"
@@ -42,17 +37,7 @@ function ProfitChart() {
           strokeWidth="3"
           strokeLinecap="round"
         />
-        <path
-          d="M4 88 C18 78 20 48 34 58 S52 82 66 50 S86 20 102 38 S120 60 136 32 S156 18 176 26 L176 96 L4 96 Z"
-          fill="#a7f3d0"
-          opacity="0.75"
-        />
       </svg>
-      <div className="flex justify-between text-[10px] font-bold text-slate-400">
-        <span>1 พ.ค.</span>
-        <span>15 พ.ค.</span>
-        <span>30 พ.ค.</span>
-      </div>
     </div>
   );
 }
@@ -67,9 +52,7 @@ function DashboardCard({
   className?: string;
 }) {
   return (
-    <section
-      className={`rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 ${className}`}
-    >
+    <section className={`rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 ${className}`}>
       <div className="border-b border-slate-100 bg-gradient-to-r from-emerald-50/80 to-sky-50/50 px-4 py-3">
         <h2 className="text-base font-black text-slate-900">{title}</h2>
       </div>
@@ -90,13 +73,17 @@ function CampaignPill({ recommended }: { recommended: boolean }) {
   );
 }
 
-export default function SellerDashboardPage() {
-  const campaignRows = campaigns.map((campaign) => {
-    const product = products.find((item) => item.id === campaign.productId)!;
-    const profit = calculateProfit(product, campaign);
+export default async function SellerDashboardPage() {
+  const [{ data: products }, { data: campaigns, source }] = await Promise.all([
+    listProducts(),
+    listCampaigns(),
+  ]);
 
-    return { campaign, product, profit };
-  });
+  const campaignRows = campaigns.map((campaign) => {
+    const product = products.find((item) => item.id === campaign.productId);
+    if (!product) return null;
+    return { campaign, product, profit: calculateProfit(product, campaign) };
+  }).filter((row): row is NonNullable<typeof row> => row !== null);
 
   const watchProducts = products
     .map((product) => {
@@ -117,8 +104,10 @@ export default function SellerDashboardPage() {
     .filter((item) => item.risky)
     .slice(0, 3);
 
+  const totalProfit = campaignRows.reduce((sum, row) => sum + Math.max(row.profit.netProfit, 0), 0);
+
   return (
-    <AppShell title="ภาพรวมร้านค้า" subtitle="ควบคุมกำไร แคมเปญ และ SKU เสี่ยงแบบ Manual Mode">
+    <AppShell title="ภาพรวมร้านค้า" subtitle={`ควบคุมกำไรและแคมเปญ · ข้อมูลจาก ${source}`}>
       <div className="mb-4 space-y-3">
         <StorePill />
         <RiskCallout />
@@ -126,19 +115,16 @@ export default function SellerDashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <DashboardCard title="ภาพรวมร้านค้า" className="xl:col-span-2">
-          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:overflow-visible">
             {[
-              ["ยอดขาย", "฿125,680", "+8.2%"],
-              ["กำไร", "฿28,560", "+14.5%"],
-              ["ออเดอร์", "246", "ชิ้น"],
+              ["SKU", `${products.length}`, "รายการ"],
+              ["กำไรแคมเปญ", formatBaht(totalProfit), "ประมาณการ"],
+              ["แคมเปญ", `${campaigns.length}`, "รายการ"],
             ].map(([label, value, helper]) => (
-              <div
-                key={label}
-                className="min-w-[7.5rem] shrink-0 rounded-xl border border-slate-100 bg-slate-50 p-3 sm:min-w-0"
-              >
-                <p className="text-[11px] font-bold text-slate-500">{label}</p>
-                <p className="mt-1 text-sm font-black text-slate-900 sm:text-base">{value}</p>
-                <p className="text-[11px] font-bold text-emerald-600">{helper}</p>
+              <div key={label as string} className="min-w-[7.5rem] shrink-0 rounded-xl border border-slate-100 bg-slate-50 p-3 sm:min-w-0">
+                <p className="text-[11px] font-bold text-slate-500">{label as string}</p>
+                <p className="mt-1 text-sm font-black text-slate-900 sm:text-base">{value as string}</p>
+                <p className="text-[11px] font-bold text-emerald-600">{helper as string}</p>
               </div>
             ))}
           </div>
@@ -151,13 +137,11 @@ export default function SellerDashboardPage() {
               <Link
                 key={campaign.id}
                 href={`/app/campaigns/${campaign.id}`}
-                className="flex items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50/80 p-3 transition hover:border-emerald-200 hover:bg-emerald-50/50"
+                className="flex items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50/80 p-3 transition hover:border-emerald-200"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-black text-slate-900">{campaign.name}</p>
-                  <p className="text-xs font-bold text-slate-500">
-                    กำไรสุทธิ {formatBaht(profit.netProfit)}
-                  </p>
+                  <p className="text-xs font-bold text-slate-500">กำไรสุทธิ {formatBaht(profit.netProfit)}</p>
                 </div>
                 <CampaignPill recommended={profit.status === "GOOD"} />
               </Link>
@@ -171,7 +155,7 @@ export default function SellerDashboardPage() {
               <Link
                 key={product.id}
                 href={`/app/products/${product.id}`}
-                className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3 transition hover:border-amber-200"
+                className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3"
               >
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-white">
                   <ShoppingBag size={18} />
@@ -189,12 +173,12 @@ export default function SellerDashboardPage() {
         </DashboardCard>
 
         <DashboardCard title="รายงานกำไร">
-          <p className="text-sm font-bold text-slate-700">กำไรสุทธิ (30 วัน)</p>
+          <p className="text-sm font-bold text-slate-700">กำไรสุทธิรวม (แคมเปญ)</p>
           <div className="mt-1 flex items-end justify-between gap-2">
-            <p className="text-2xl font-black text-slate-950">฿86,250</p>
+            <p className="text-2xl font-black text-slate-950">{formatBaht(totalProfit)}</p>
             <span className="flex items-center gap-1 text-xs font-black text-emerald-600">
               <ArrowUpRight size={14} />
-              +12.5%
+              {source}
             </span>
           </div>
           <ProfitChart />
@@ -207,3 +191,4 @@ export default function SellerDashboardPage() {
     </AppShell>
   );
 }
+

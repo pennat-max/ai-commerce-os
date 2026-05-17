@@ -1,17 +1,16 @@
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, LockKeyhole } from "lucide-react";
+import { ArrowLeft, CalendarDays } from "lucide-react";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
+import { CampaignApprovalButtons } from "@/components/campaign-approval-buttons";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { ProfitBreakdown } from "@/components/profit-breakdown";
 import { StatusBadge } from "@/components/status";
-import { campaigns, products } from "@/lib/mock-data";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
+import { getCampaignById, getProductById } from "@/lib/repositories";
 import { formatBaht } from "@/lib/profit";
 
-export function generateStaticParams() {
-  return campaigns.map((campaign) => ({ id: campaign.id }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function CampaignDetailPage({
   params,
@@ -19,16 +18,16 @@ export default async function CampaignDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const campaign = campaigns.find((item) => item.id === id);
+  const { data: campaign, source } = await getCampaignById(id);
   if (!campaign) notFound();
 
-  const product = products.find((item) => item.id === campaign.productId);
+  const { data: product } = await getProductById(campaign.productId);
   if (!product) notFound();
 
   const decision = recommendCampaignDecision(product, campaign);
 
   return (
-    <AppShell title="รายละเอียดแคมเปญ" subtitle="ดูผลกระทบของส่วนลดและค่าใช้จ่ายก่อนอนุมัติ">
+    <AppShell title="รายละเอียดแคมเปญ" subtitle={`ดูผลกระทบก่อนอนุมัติ · ${source}`}>
       <div className="mb-4">
         <Link
           href="/app/campaigns"
@@ -73,23 +72,7 @@ export default async function CampaignDetailPage({
           <ProfitBreakdown product={product} campaign={campaign} />
 
           <CommerceCard title="คำแนะนำการอนุมัติ">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
-              <button type="button" className="min-h-12 rounded-xl border border-emerald-200 bg-emerald-600 text-sm font-black text-white active:scale-[0.98]">
-                อนุมัติ
-              </button>
-              <button type="button" className="min-h-12 rounded-xl border border-orange-200 bg-orange-500 text-sm font-black text-white active:scale-[0.98]">
-                เฝ้าดู
-              </button>
-              <button type="button" className="min-h-12 rounded-xl border border-rose-200 bg-rose-600 text-sm font-black text-white active:scale-[0.98]">
-                ปฏิเสธ
-              </button>
-            </div>
-            <div className="mt-4 flex items-start gap-3 rounded-xl bg-slate-100 p-4">
-              <LockKeyhole className="shrink-0 text-slate-500" size={22} />
-              <p className="text-sm font-bold text-slate-600">
-                Phase 1 จะไม่ส่งคำสั่งไป Shopee, Lazada หรือ TikTok Shop จริง ปุ่มนี้เป็น mock approval เพื่อยืนยัน workflow เท่านั้น
-              </p>
-            </div>
+            <CampaignApprovalButtons campaignId={campaign.id} />
           </CommerceCard>
         </div>
       </div>

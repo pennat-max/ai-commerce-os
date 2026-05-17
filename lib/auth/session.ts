@@ -59,8 +59,6 @@ export async function getAppSession(): Promise<AppSession | null> {
     .limit(1)
     .maybeSingle();
 
-  if (membershipError) return null;
-
   const typedMembership = membership as MembershipRow | null;
   const organization = typedMembership?.organizations;
   const organizationName = Array.isArray(organization)

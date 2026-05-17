@@ -66,7 +66,7 @@ export async function saveCampaignDecisionAction(campaignId: string, action: Dec
             ? "ปฏิเสธจากหน้าเว็บ Phase 1"
             : "เฝ้าดูต่อจากหน้าเว็บ Phase 1",
       decided_at: new Date().toISOString(),
-      decided_by: user?.id ?? null,
+      decided_by: null,
     })
     .eq("campaign_id", campaignId)
     .select("campaign_id, action")

@@ -202,11 +202,9 @@ Create these users in Supabase Authentication, then run `supabase/seed-auth.sql`
 | `owner@example.com` | CUSTOMER_OWNER | `/app` (บ้านสวยออนไลน์) |
 | `staff@example.com` | CUSTOMER_STAFF | `/app` |
 
-## Remaining Next Steps
+## Remaining Next Steps (Phase 2+)
 
-- Move all customer/admin mutations behind authenticated Supabase users (demo public RLS policies removed).
-- Expand Supabase repositories for campaigns, alerts, settings, and admin usage pages.
-- Add role-aware route protection for admin and customer dashboards.
-- Add product and campaign detail pages with full profit breakdown.
-- Add real LINE notification integration.
-- Add real marketplace API integrations after manual workflows are stable.
+- Real LINE / Email notification delivery
+- Shopee, Lazada, and TikTok Shop API integrations
+- Auto Mode (automated campaign actions)
+- Custom domain and E2E tests

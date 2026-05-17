@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { getHomePathForRole, isAdminPath, isProtectedPath } from "@/lib/auth/routes";
+import { isAdminPath, isProtectedPath } from "@/lib/auth/routes";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { UserRole } from "@/types/domain";
 
@@ -47,11 +47,9 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname === "/login" && user) {
-    const role = await getUserRole(supabase, user.id);
-    const home = role ? getHomePathForRole(role) : "/app";
-    return NextResponse.redirect(new URL(home, request.url));
-  }
+  // Do not redirect away from /login here — getAppSession() in the login page
+  // is the source of truth. Redirecting on auth user alone caused ERR_TOO_MANY_REDIRECTS
+  // when cookies were valid but commerce_profiles / session resolution failed.
 
   if (user && isAdminPath(pathname)) {
     const role = await getUserRole(supabase, user.id);

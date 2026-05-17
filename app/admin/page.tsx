@@ -1,12 +1,15 @@
 import { AdminSummary, AppShell, SectionTitle } from "@/components/app-shell";
-import { alerts, organizations } from "@/lib/mock-data";
+import { listAlerts, listOrganizations } from "@/lib/repositories";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const [{ data: organizations, source: orgSource }, { data: alerts, source: alertSource }] =
+    await Promise.all([listOrganizations(), listAlerts()]);
+
   return (
     <AppShell
       mode="admin"
       title="แดชบอร์ดเจ้าของระบบ"
-      subtitle="ดูภาพรวมลูกค้า แพ็กเกจ ร้านค้า การใช้งาน และแจ้งเตือนทั้งระบบ"
+      subtitle={`ดูภาพรวมลูกค้าและแจ้งเตือน · ${orgSource}`}
     >
       <div className="space-y-6">
         <AdminSummary />
@@ -24,15 +27,17 @@ export default function AdminPage() {
                     {organization.plan}
                   </span>
                 </div>
-                <p className="mt-3 text-sm font-bold text-slate-700">{organization.stores} stores · subscription active</p>
+                <p className="mt-3 text-sm font-bold text-slate-700">
+                  {organization.stores} stores · usage {organization.usagePercent}%
+                </p>
               </article>
             ))}
           </div>
         </section>
         <section>
-          <SectionTitle title="แจ้งเตือนระบบ" />
+          <SectionTitle title={`แจ้งเตือนระบบ (${alertSource})`} />
           <div className="grid gap-3">
-            {alerts.map((alert) => (
+            {alerts.slice(0, 5).map((alert) => (
               <article key={alert.id} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
                 <h2 className="font-black">{alert.title}</h2>
                 <p className="mt-1 text-sm text-slate-600">{alert.message}</p>

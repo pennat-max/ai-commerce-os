@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -10,7 +10,6 @@ import { getHomePathForRole } from "@/lib/auth/routes";
 import type { UserRole } from "@/types/domain";
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("owner@example.com");
   const [password, setPassword] = useState("");
@@ -69,8 +68,8 @@ export function LoginForm() {
       const role = profileResult.role;
       const destination = role === "SUPER_ADMIN" ? getHomePathForRole(role) : nextPath;
 
-      router.replace(destination);
-      router.refresh();
+      // Full navigation so middleware/server receive auth cookies reliably on Vercel.
+      window.location.assign(destination);
     } catch {
       setMessage("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {

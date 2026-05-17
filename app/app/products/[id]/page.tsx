@@ -5,13 +5,10 @@ import { AppShell } from "@/components/app-shell";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
 import { ProfitBreakdown } from "@/components/profit-breakdown";
 import { platformLabel } from "@/components/status";
-import { products } from "@/lib/mock-data";
 import { getProductById, listStores } from "@/lib/repositories";
 import { formatBaht, formatPercent } from "@/lib/profit";
 
-export function generateStaticParams() {
-  return products.map((product) => ({ id: product.id }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function ProductDetailPage({
   params,
@@ -22,7 +19,8 @@ export default async function ProductDetailPage({
   const { data: product, source, error } = await getProductById(id);
   if (!product) notFound();
 
-  const store = listStores().find((item) => item.id === product.storeId);
+  const { data: stores } = await listStores();
+  const store = stores.find((item) => item.id === product.storeId);
 
   return (
     <AppShell title="รายละเอียดสินค้า" subtitle="ดูต้นทุน กำไร และความเสี่ยงราย SKU">
@@ -50,8 +48,8 @@ export default async function ProductDetailPage({
 
           <div className="mt-4 grid gap-2">
             <StatBox label="แพลตฟอร์ม" value={platformLabel(product.platform)} />
-            <StatBox label="ร้านค้า" value={store?.name ?? "ร้าน mock"} />
-            <StatBox label="แหล่งข้อมูล" value={source} helper={error ? "ใช้ mock หลัง query ล้มเหลว" : undefined} />
+            <StatBox label="ร้านค้า" value={store?.name ?? "—"} />
+            <StatBox label="แหล่งข้อมูล" value={source} helper={error} />
             <StatBox
               label="สต็อก"
               value={`${product.stock} ชิ้น`}
@@ -70,15 +68,13 @@ export default async function ProductDetailPage({
 
           <ProfitBreakdown product={product} />
 
-          <CommerceCard title="การเชื่อมต่อ Marketplace (mock)">
+          <CommerceCard title="การเชื่อมต่อ Marketplace">
             <div className="flex items-start gap-3 rounded-xl bg-sky-50 p-4">
               <Store className="shrink-0 text-blue-700" size={22} />
               <div>
-                <p className="text-sm font-black text-slate-900">
-                  ยังไม่เชื่อมต่อ API จริงใน Phase 1
-                </p>
+                <p className="text-sm font-black text-slate-900">ยังไม่เชื่อมต่อ API จริงใน Phase 1</p>
                 <p className="mt-1 text-sm font-bold text-slate-500">
-                  หน้านี้ใช้ mock data เพื่อยืนยัน UX, profit logic และ multi-tenant structure ก่อนต่อ marketplace จริง
+                  ข้อมูลจาก {source} — พร้อมต่อ Shopee / Lazada / TikTok ใน Phase 2
                 </p>
               </div>
             </div>

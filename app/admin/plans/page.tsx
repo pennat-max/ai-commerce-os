@@ -1,10 +1,12 @@
 import { AppShell, SectionTitle } from "@/components/app-shell";
-import { plans } from "@/lib/mock-data";
+import { listPlans } from "@/lib/repositories";
 import { formatBaht } from "@/lib/profit";
 
-export default function PlansPage() {
+export default async function PlansPage() {
+  const { data: plans, source } = await listPlans();
+
   return (
-    <AppShell mode="admin" title="แพ็กเกจ" subtitle="บริหารแพ็กเกจ ราคา quota และสิทธิ์ใช้งาน">
+    <AppShell mode="admin" title="แพ็กเกจ" subtitle={`บริหารแพ็กเกจ SaaS · ${source}`}>
       <SectionTitle title="แพ็กเกจ SaaS" />
       <div className="grid gap-3 md:grid-cols-3">
         {plans.map((plan) => (
