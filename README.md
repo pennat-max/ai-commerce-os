@@ -215,16 +215,24 @@ Set optional env vars in `.env.local` / Vercel:
 
 ### Campaign auto-scan (every 15 minutes)
 
-Vercel Cron calls `GET /api/cron/scan-campaigns` every **15 minutes** (`vercel.json`).
+Endpoint: `GET https://your-app.vercel.app/api/cron/scan-campaigns`
+
+Headers: `Authorization: Bearer <CRON_SECRET>`
 
 Required env on Vercel:
 
-- `CRON_SECRET` — Vercel sends `Authorization: Bearer <CRON_SECRET>`
-- `SUPABASE_SERVICE_ROLE_KEY` — scan all organizations (server-side only)
+- `CRON_SECRET` — random secret for cron callers
+- `SUPABASE_SERVICE_ROLE_KEY` — scan all organizations (server-side only, never expose to browser)
 
-Manual scan: `/app/campaigns` → **สแกนตอนนี้**
+**Vercel Hobby** does not support sub-daily cron. For **every 15 minutes**, use a free external scheduler (e.g. [cron-job.org](https://cron-job.org)):
 
-Until marketplace APIs are live, scan uses **mock discovery** per platform (Shopee/Lazada/TikTok) from your SKU list, then recalculates profit and creates DANGER alerts.
+1. URL: `https://ai-commerce-os-beta.vercel.app/api/cron/scan-campaigns`
+2. Schedule: every 15 minutes
+3. Request header: `Authorization: Bearer <your CRON_SECRET>`
+
+Manual scan anytime: `/app/campaigns` → **สแกนตอนนี้**
+
+Until marketplace APIs are live, scan uses **mock discovery** per Shopee/Lazada/TikTok from your SKU list, recalculates profit, and creates DANGER alerts (+ LINE if `LINE_NOTIFY_TOKEN` is set).
 
 ### New routes
 
