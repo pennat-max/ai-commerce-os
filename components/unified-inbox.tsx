@@ -136,6 +136,7 @@ function statusIcon(status: InboxStatus) {
 export function UnifiedInbox() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<InboxStatus | "ทั้งหมด">("ทั้งหมด");
+  const [notice, setNotice] = useState<string | null>(null);
 
   const filteredChats = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -200,6 +201,15 @@ export function UnifiedInbox() {
       </PremiumIntro>
 
       <PremiumSection title="ข้อความล่าสุด" helper="เลือกส่งคำตอบ ขออนุมัติ หรือเปิดดูสินค้าที่เกี่ยวข้อง">
+        {notice ? (
+          <div
+            className="mb-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-800 shadow-sm"
+            role="status"
+          >
+            {notice}
+          </div>
+        ) : null}
+
         {filteredChats.map((chat) => (
           <PremiumFeedCard
             key={chat.id}
@@ -237,6 +247,8 @@ export function UnifiedInbox() {
               <button
                 className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-2 text-xs font-black text-white sm:gap-2 sm:px-3 sm:text-sm"
                 type="button"
+                data-action="mock-send-reply"
+                onClick={() => setNotice(`${chat.customerName}: ทำเครื่องหมายว่าส่งคำตอบแล้ว (เดโม)`)}
               >
                 <Send size={15} />
                 ส่งคำตอบ
@@ -244,6 +256,8 @@ export function UnifiedInbox() {
               <button
                 className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-2 text-xs font-black text-amber-800 sm:gap-2 sm:px-3 sm:text-sm"
                 type="button"
+                data-action="mock-request-approval"
+                onClick={() => setNotice(`${chat.customerName}: ส่งเข้าคิวขออนุมัติแล้ว (เดโม)`)}
               >
                 <ShieldCheck size={15} />
                 ขออนุมัติ

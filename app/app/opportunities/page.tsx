@@ -168,15 +168,17 @@ export default function OpportunitiesPage() {
                   >
                     ดูรายละเอียด
                   </Link>
-                  <button
-                    className="min-h-12 rounded-xl bg-emerald-700 px-3 text-sm font-black text-white"
-                    type="button"
+                  <Link
+                    href={item.href}
+                    className="flex min-h-12 items-center justify-center rounded-xl bg-emerald-700 px-3 text-center text-sm font-black text-white"
                   >
                     ทำเลย
-                  </button>
+                  </Link>
                   <button
-                    className="min-h-12 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-500"
+                    className="min-h-12 cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-400"
                     type="button"
+                    aria-disabled="true"
+                    disabled
                   >
                     ไว้ก่อน
                   </button>

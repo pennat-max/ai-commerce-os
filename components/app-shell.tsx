@@ -120,8 +120,8 @@ export function AppShell({
       <main
         className={
           premiumMobileFrame
-            ? "min-h-screen bg-[radial-gradient(circle_at_top_left,#eff6ff_0,#ecfdf5_26%,#fbfdff_58%,#faf5ff_100%)] pb-[calc(8rem+var(--safe-bottom))] md:ml-64 md:pb-0"
-            : "pb-[calc(7.25rem+var(--safe-bottom))] md:ml-64 md:pb-0"
+            ? "min-h-screen bg-[radial-gradient(circle_at_top_left,#eff6ff_0,#ecfdf5_26%,#fbfdff_58%,#faf5ff_100%)] pb-[calc(10rem+var(--safe-bottom))] md:ml-64 md:pb-0"
+            : "pb-[calc(9.5rem+var(--safe-bottom))] md:ml-64 md:pb-0"
         }
       >
         <div
@@ -209,10 +209,21 @@ export function SectionTitle({ title, action }: { title: string; action?: React.
 export function ModeSwitch() {
   return (
     <div className="grid grid-cols-2 rounded-[1.5rem] border border-white/80 bg-white/80 p-1 text-sm font-black shadow-sm">
-      <button type="button" className="min-h-12 rounded-2xl bg-slate-950 px-4 text-white shadow-sm">
+      <button
+        type="button"
+        className="min-h-12 cursor-default rounded-2xl bg-slate-950 px-4 text-white shadow-sm"
+        aria-pressed="true"
+        aria-disabled="true"
+        disabled
+      >
         อนุมัติเอง
       </button>
-      <button type="button" className="min-h-12 rounded-2xl px-4 text-slate-400" disabled>
+      <button
+        type="button"
+        className="min-h-12 cursor-not-allowed rounded-2xl px-4 text-slate-400"
+        aria-disabled="true"
+        disabled
+      >
         ออโต้เร็วๆ นี้
       </button>
     </div>
