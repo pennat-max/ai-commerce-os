@@ -50,7 +50,7 @@ export function AppNav({ mode }: { mode: "seller" | "admin" }) {
 
   return (
     <nav
-      className={`grid ${mobileColumns} gap-1 pb-1 md:flex md:flex-col md:overflow-visible md:pb-0`}
+      className={`grid ${mobileColumns} gap-1.5 pb-1.5 md:flex md:flex-col md:overflow-visible md:pb-0`}
       aria-label="เมนูหลัก"
     >
       {items.map((item) => {
@@ -61,13 +61,13 @@ export function AppNav({ mode }: { mode: "seller" | "admin" }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1.5 text-center text-[10px] font-black transition md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
+            className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-1.5 text-center text-[10px] font-black transition md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
               active
                 ? "bg-emerald-700 text-white shadow-sm md:shadow-none"
                 : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
             }`}
           >
-            <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+            <Icon size={21} strokeWidth={active ? 2.5 : 2} />
             <span className="leading-tight">{item.label}</span>
           </Link>
         );

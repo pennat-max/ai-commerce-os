@@ -98,15 +98,24 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
     setSyncState((current) => ({
       ...current,
       [campaignId]: result.ok
-        ? "บันทึกลง Supabase แล้ว"
+        ? "บันทึกแล้ว"
         : result.source === "mock"
-          ? "บันทึก mock ใน browser"
-          : `บันทึก DB ไม่สำเร็จ: ${result.error}`,
+          ? "บันทึกในเครื่องสำหรับเดโม"
+          : `บันทึกไม่สำเร็จ: ${result.error}`,
     }));
   }
 
   return (
     <div className="grid gap-3">
+      {rows.length === 0 ? (
+        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center">
+          <p className="text-base font-black text-slate-900">ยังไม่มีแคมเปญให้ตัดสินใจ</p>
+          <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
+            เมื่อมีแคมเปญใหม่ ระบบจะแสดงกำไรและคำแนะนำให้กดอนุมัติหรือปฏิเสธที่นี่
+          </p>
+        </div>
+      ) : null}
+
       {rows.map(({ campaign, product, decision }) => {
         const currentAction = actions[campaign.id];
         const advice =
@@ -116,11 +125,11 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
         const topTip = advice?.suggestions.find((item) => item.id === "combo") ?? advice?.suggestions[0];
 
         return (
-          <article key={campaign.id} className="rounded-xl border border-sky-100 bg-white p-3">
+          <article key={campaign.id} className="rounded-2xl border border-sky-100 bg-white p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h3 className="truncate text-base font-black text-slate-950">{campaign.name}</h3>
-                <p className="text-xs font-bold text-slate-500">
+                <h3 className="text-base font-black leading-tight text-slate-950">{campaign.name}</h3>
+                <p className="mt-1 text-xs font-bold leading-5 text-slate-500">
                   {product.sku} · {campaign.startsAt} ถึง {campaign.endsAt}
                 </p>
               </div>
@@ -128,21 +137,21 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
             </div>
 
             {topTip ? (
-              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900 ring-1 ring-amber-100">
-                💡 {topTip.title}: {topTip.description}
+              <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2.5 text-xs font-bold leading-5 text-amber-900 ring-1 ring-amber-100">
+                {topTip.title}: {topTip.description}
               </p>
             ) : null}
 
-            <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5">
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
               <StatBox
                 label="กำไรสุทธิ"
                 value={formatBaht(decision.profit.netProfit)}
                 tone={decision.profit.netProfit <= 0 ? "red" : "green"}
               />
-              <StatBox label="Margin" value={formatPercent(decision.profit.marginPercent)} />
+              <StatBox label="มาร์จิน" value={formatPercent(decision.profit.marginPercent)} />
               <StatBox label="ส่วนลด" value={formatBaht(campaign.campaignDiscount)} />
-              <StatBox label="Voucher" value={formatBaht(campaign.shopVoucher)} />
-              <StatBox label="Shipping" value={formatBaht(campaign.shippingSubsidy)} />
+              <StatBox label="คูปองร้าน" value={formatBaht(campaign.shopVoucher)} />
+              <StatBox label="ช่วยค่าส่ง" value={formatBaht(campaign.shippingSubsidy)} />
             </div>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -154,12 +163,12 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
               {lastUpdated === campaign.id ? (
                 <span className="flex items-center gap-1 text-xs font-bold text-slate-500">
                   <CheckCircle2 size={14} className="text-emerald-600" />
-                  {syncState[campaign.id] ?? "บันทึก mock แล้ว"}
+                  {syncState[campaign.id] ?? "บันทึกเดโมแล้ว"}
                 </span>
               ) : null}
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-4">
               <button
                 type="button"
                 className="min-h-12 rounded-xl border border-emerald-200 bg-emerald-50 text-sm font-black text-emerald-800 active:scale-[0.98]"

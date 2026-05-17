@@ -31,7 +31,7 @@ export function CampaignScanPanel({
     }
 
     setMessage(
-      `สแกนแล้ว · ใหม่ ${result.imported} · อัปเดต ${result.updated} · แจ้งเตือน ${result.alertsCreated}`,
+      `อัปเดตแล้ว · ใหม่ ${result.imported} · แก้ไข ${result.updated} · แจ้งเตือน ${result.alertsCreated}`,
     );
     window.location.reload();
   }
@@ -41,14 +41,14 @@ export function CampaignScanPanel({
     : "ยังไม่เคยสแกน";
 
   return (
-    <div className="rounded-xl border border-emerald-100 bg-emerald-50/80 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4">
+      <div className="grid gap-3 sm:flex sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-black text-emerald-900">สแกนแคมเปญอัตโนมัติ</p>
-          <p className="text-xs font-bold text-emerald-800">ทุก 15 นาที · สแกนล่าสุด {lastLabel}</p>
+          <p className="text-base font-black text-emerald-900">อัปเดตแคมเปญเดโม</p>
+          <p className="mt-1 text-sm font-bold leading-6 text-emerald-800">รอบล่าสุด {lastLabel}</p>
           {lastScan ? (
-            <p className="mt-1 text-[11px] font-bold text-emerald-700">
-              ใหม่ {lastScan.imported} · อัปเดต {lastScan.updated} · คำนวณใหม่ {lastScan.decisionsUpdated}
+            <p className="mt-1 text-xs font-bold leading-5 text-emerald-700">
+              ใหม่ {lastScan.imported} · แก้ไข {lastScan.updated} · คำนวณใหม่ {lastScan.decisionsUpdated}
             </p>
           ) : null}
         </div>
@@ -56,10 +56,10 @@ export function CampaignScanPanel({
           type="button"
           onClick={scanNow}
           disabled={loading}
-          className="flex min-h-10 items-center gap-2 rounded-lg bg-emerald-700 px-3 text-xs font-black text-white disabled:opacity-60"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white disabled:opacity-60"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-          {loading ? "กำลังสแกน..." : "สแกนตอนนี้"}
+          {loading ? "กำลังอัปเดต..." : "อัปเดตตอนนี้"}
         </button>
       </div>
       {message ? <p className="mt-2 text-xs font-bold text-emerald-900">{message}</p> : null}

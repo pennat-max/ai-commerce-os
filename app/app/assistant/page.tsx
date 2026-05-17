@@ -42,9 +42,9 @@ export default async function AssistantPage() {
         what:
           riskyProducts.length > 0
             ? `พบสินค้า/แคมเปญที่ต้องดู ${riskyProducts.length + Math.max(0, campaignRows.filter((row) => row.decision.recommendation !== "GOOD").length)} รายการ`
-            : "วันนี้ยังไม่พบความเสี่ยงหลักจากข้อมูล mock",
+            : "วันนี้ยังไม่พบความเสี่ยงหลักจากข้อมูลเดโม",
         why: "รายการที่กำไรต่ำหรือสต็อกต่ำอาจทำให้ร้านเสียกำไร แม้ยอดขายดูดี",
-        next: "เปิดดู SKU เสี่ยงและแคมเปญที่ไม่ผ่านเกณฑ์ก่อนกดอนุมัติใน Manual Mode",
+        next: "เปิดดูสินค้าที่เสี่ยงและแคมเปญที่ไม่ผ่านเกณฑ์ก่อนกดอนุมัติ",
       },
     },
     {
@@ -56,9 +56,9 @@ export default async function AssistantPage() {
           ? `${bestProduct.product.sku} ทำกำไรพื้นฐานดีที่สุดที่ ${formatBaht(bestProduct.profit.netProfit)}`
           : "ยังไม่มีข้อมูลสินค้าให้เปรียบเทียบ",
         why: bestProduct
-          ? `Margin อยู่ที่ ${formatPercent(bestProduct.profit.marginPercent)} จึงเหมาะกับการดันยอดขาย`
+          ? `มาร์จินอยู่ที่ ${formatPercent(bestProduct.profit.marginPercent)} จึงเหมาะกับการดันยอดขาย`
           : "AI ต้องมีข้อมูลต้นทุนและราคาขายก่อนจึงจะจัดอันดับได้",
-        next: "ใช้สินค้านี้เป็นตัวหลักในแคมเปญสั้นหรือ bundle ที่ยังไม่กิน margin มากเกินไป",
+        next: "ใช้สินค้านี้เป็นตัวหลักในแคมเปญสั้นหรือขายคู่กับสินค้าอื่นโดยไม่ลดกำไรมากเกินไป",
       },
     },
     {
@@ -88,14 +88,14 @@ export default async function AssistantPage() {
     },
     {
       id: "ads-risk",
-      question: "Ads ตัวไหนไม่คุ้ม",
+      question: "โฆษณาตัวไหนไม่คุ้ม",
       answer: {
         tone: adsRisk?.profit.status === "DANGER" ? "red" : "yellow",
         what: adsRisk
-          ? `${adsRisk.product.sku} ใช้งบ ads ${formatBaht(adsRisk.product.adsCost)} และกำไรสุทธิ ${formatBaht(adsRisk.profit.netProfit)}`
-          : "ยังไม่มีข้อมูล ads cost ให้ประเมิน",
-        why: "เมื่อ ads cost สูงกว่ากำไรที่เหลือ การเร่งยิงโฆษณาจะเพิ่มยอดขายแต่กำไรอาจไม่โต",
-        next: "ลด budget หรือปรับราคา/คูปองก่อนเพิ่มงบโฆษณา",
+          ? `${adsRisk.product.sku} ใช้งบโฆษณา ${formatBaht(adsRisk.product.adsCost)} และกำไรสุทธิ ${formatBaht(adsRisk.profit.netProfit)}`
+          : "ยังไม่มีข้อมูลงบโฆษณาให้ประเมิน",
+        why: "เมื่องบโฆษณาสูงกว่ากำไรที่เหลือ การเร่งยิงโฆษณาจะเพิ่มยอดขายแต่กำไรอาจไม่โต",
+        next: "ลดงบหรือปรับราคา/คูปองก่อนเพิ่มงบโฆษณา",
       },
     },
     {
@@ -104,7 +104,7 @@ export default async function AssistantPage() {
       answer: {
         tone: "blue",
         what: "ลำดับงานที่คุ้มที่สุดคือเช็กแคมเปญเสี่ยง เติมสต็อกต่ำ แล้วค่อยดันสินค้ากำไรดี",
-        why: "การปิดความเสี่ยงก่อนช่วยกันขาดทุน จากนั้นจึงใช้ budget ไปกับสินค้าที่ margin ดี",
+        why: "การปิดความเสี่ยงก่อนช่วยกันขาดทุน จากนั้นจึงใช้งบกับสินค้าที่มาร์จินดี",
         next: "ไปหน้าแคมเปญเพื่ออนุมัติ/ปฏิเสธ แล้วเปิดหน้าโอกาสทำกำไรเพื่อเลือก action ถัดไป",
       },
     },
@@ -113,7 +113,7 @@ export default async function AssistantPage() {
   return (
     <AppShell
       title="ถาม AI"
-      subtitle="ผู้ช่วยธุรกิจแบบ mock ที่ตอบจากสินค้า แคมเปญ และสูตรกำไรในระบบ"
+      subtitle="ผู้ช่วยเดโมที่ตอบจากสินค้า แคมเปญ และสูตรกำไรในระบบ"
     >
       <AskAiAssistant questions={questions} />
     </AppShell>

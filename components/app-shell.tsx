@@ -27,23 +27,29 @@ export function AppShell({
   const session = useAppSession();
   const homeHref = mode === "admin" ? "/admin" : "/app";
   const orgLabel = session.organizationName ?? (mode === "admin" ? "เจ้าของระบบ" : "องค์กรของคุณ");
+  const roleLabel =
+    {
+      SUPER_ADMIN: "ผู้ดูแลระบบ",
+      CUSTOMER_OWNER: "เจ้าของร้าน",
+      CUSTOMER_STAFF: "ทีมร้านค้า",
+    }[session.role] ?? session.role;
 
   return (
     <div className="min-h-screen bg-[#f6f7f4] text-slate-950">
-      <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 px-2 pb-safe pt-2 backdrop-blur md:inset-y-0 md:left-0 md:right-auto md:w-64 md:border-r md:border-t-0 md:px-4 md:py-5">
+      <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 px-2.5 pb-safe pt-2.5 backdrop-blur md:inset-y-0 md:left-0 md:right-auto md:w-64 md:border-r md:border-t-0 md:px-4 md:py-5">
         <Link href={homeHref} className="mb-6 hidden items-center gap-3 px-2 md:flex">
           <span className="flex size-11 items-center justify-center rounded-xl bg-emerald-700 text-white">
             <Bot size={24} />
           </span>
           <span>
             <span className="block text-base font-black">AI Commerce OS</span>
-            <span className="block text-xs text-slate-500">Manual Mode MVP</span>
+            <span className="block text-xs text-slate-500">โหมดอนุมัติเอง</span>
           </span>
         </Link>
         <AppNav mode={mode} />
       </aside>
 
-      <main className="pb-[calc(5.5rem+var(--safe-bottom))] md:ml-64 md:pb-0">
+      <main className="pb-[calc(7rem+var(--safe-bottom))] md:ml-64 md:pb-0">
         <div className="sticky top-0 z-10 border-b border-slate-200 bg-[#f6f7f4]/95 pt-safe backdrop-blur md:hidden">
           <div className="flex items-center justify-between gap-3 px-4 py-3">
             <Link href={homeHref} className="flex min-w-0 items-center gap-2.5">
@@ -65,11 +71,11 @@ export function AppShell({
         <header className="border-b border-slate-200 bg-[#f6f7f4]/90 px-4 py-4 md:px-8">
           <div className="mx-auto flex max-w-6xl items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-700 md:text-xs">
-                {session.role}
+              <p className="text-xs font-black text-emerald-700 md:text-sm">
+                {roleLabel}
               </p>
               <h1 className="mt-0.5 text-xl font-black leading-tight text-slate-950 md:text-3xl">{title}</h1>
-              <p className="mt-1 text-sm leading-snug text-slate-600">{subtitle}</p>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-600">{subtitle}</p>
             </div>
             <div className="hidden shrink-0 items-center gap-2 sm:flex">
               <SessionBadge />
@@ -78,7 +84,7 @@ export function AppShell({
           </div>
         </header>
 
-        <div className="mx-auto max-w-6xl px-4 py-5 md:px-8">{children}</div>
+        <div className="mx-auto max-w-6xl px-4 py-5 md:px-8 md:py-7">{children}</div>
       </main>
     </div>
   );
@@ -97,10 +103,10 @@ export function ModeSwitch() {
   return (
     <div className="grid grid-cols-2 rounded-2xl bg-slate-200 p-1 text-sm font-black">
       <button type="button" className="min-h-12 rounded-xl bg-emerald-700 px-4 text-white shadow-sm">
-        Manual Mode
+        อนุมัติเอง
       </button>
       <button type="button" className="min-h-12 rounded-xl px-4 text-slate-400" disabled>
-        Auto Mode เร็วๆ นี้
+        ออโต้เร็วๆ นี้
       </button>
     </div>
   );
@@ -125,7 +131,7 @@ export function RiskCallout() {
         <div>
           <h3 className="font-black">ต้องตรวจแคมเปญก่อนอนุมัติ</h3>
           <p className="mt-1 text-sm text-rose-50">
-            Phase 1 ใช้ Manual Mode เท่านั้น ระบบคำนวณและแนะนำ แต่ยังไม่ส่งคำสั่งไป Marketplace จริง
+            เฟสแรกให้เจ้าของร้านกดอนุมัติเอง ระบบช่วยคำนวณและแนะนำ แต่ยังไม่ส่งคำสั่งไปแพลตฟอร์มจริง
           </p>
         </div>
       </div>

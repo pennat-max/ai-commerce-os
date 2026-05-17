@@ -150,14 +150,14 @@ export function UnifiedInbox() {
             <MessageCircle size={23} />
           </span>
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
-              Unified Inbox
+            <p className="text-xs font-black text-emerald-700">
+              กล่องแชทรวม
             </p>
             <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">
               รวมแชททุกช่องทางไว้ที่เดียว
             </h2>
             <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
-              วันนี้มีแชทรอตอบ {waitingCount} รายการ และต้องขออนุมัติ {approvalCount} รายการ
+              วันนี้มีแชทรอตอบ {waitingCount} รายการ และข้อความที่ควรขออนุมัติ {approvalCount} รายการ
             </p>
           </div>
         </div>
@@ -176,7 +176,7 @@ export function UnifiedInbox() {
           {statusFilters.map((item) => (
             <button
               key={item}
-              className={`min-h-10 shrink-0 rounded-full px-4 text-xs font-black ring-1 ${
+              className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-black ring-1 ${
                 status === item
                   ? "bg-emerald-700 text-white ring-emerald-700"
                   : "bg-white text-slate-600 ring-slate-200"
@@ -202,7 +202,7 @@ export function UnifiedInbox() {
                   </span>
                 </div>
                 <p className="mt-1 text-xs font-bold text-slate-500">
-                  {chat.time} · SKU {chat.sku}
+                  {chat.time} · สินค้า {chat.sku}
                 </p>
               </div>
               <span className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black ring-1 ${statusClass[chat.status]}`}>
@@ -221,16 +221,16 @@ export function UnifiedInbox() {
               <p className="mt-1 text-sm font-bold leading-6 text-emerald-950">{chat.aiReply}</p>
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <button
-                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-2 text-xs font-black text-white"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-3 text-sm font-black text-white"
                 type="button"
               >
                 <Send size={15} />
                 ส่งคำตอบ
               </button>
               <button
-                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-2 text-xs font-black text-amber-800"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 text-sm font-black text-amber-800"
                 type="button"
               >
                 <ShieldCheck size={15} />
@@ -238,7 +238,7 @@ export function UnifiedInbox() {
               </button>
               <Link
                 href={`/app/products/${chat.productId}`}
-                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 text-xs font-black text-slate-700"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-black text-slate-700"
               >
                 <PackageSearch size={15} />
                 ดูสินค้า

@@ -54,7 +54,7 @@ function AssistantCard({
           <Bot size={26} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
+          <p className="text-xs font-black text-emerald-700">
             AI ผู้ช่วยร้านค้า
           </p>
           <h2 className="mt-2 text-2xl font-black leading-tight text-slate-950">
@@ -67,10 +67,10 @@ function AssistantCard({
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
         <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-800">
-          Manual Mode
+          โหมดอนุมัติเอง
         </span>
         <span className="rounded-full border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black text-slate-600">
-          ข้อมูล: {dataSource}
+          {dataSource}
         </span>
       </div>
     </section>
@@ -101,7 +101,7 @@ function ProfitSummaryCard({
       </div>
       <div className="mt-4 grid grid-cols-3 gap-2">
         <MetricTile label="ยอดขาย" value={formatBaht(todaySales)} tone="blue" />
-        <MetricTile label="Margin" value={formatPercent(averageMargin)} tone="green" />
+        <MetricTile label="มาร์จิน" value={formatPercent(averageMargin)} tone="green" />
         <MetricTile
           label="สต็อกต่ำ"
           value={`${lowStockCount}`}
@@ -262,8 +262,8 @@ export default async function SellerDashboardPage() {
     productsResult.source === "supabase" ||
     campaignsResult.source === "supabase" ||
     alertsResult.source === "supabase"
-      ? "Supabase demo"
-      : "Mock demo";
+      ? "ข้อมูลจาก Supabase"
+      : "ข้อมูลเดโมร้าน";
 
   const urgentActions = [
     ...dangerCampaigns.map(({ campaign, product, decision }) => ({
@@ -294,7 +294,7 @@ export default async function SellerDashboardPage() {
     })),
     ...warningCampaigns.map(({ campaign, product, decision }) => ({
       title: `เช็กส่วนลดก่อน: ${campaign.name}`,
-      detail: `${product.sku} margin ${formatPercent(decision.profit.marginPercent)} ต่ำกว่าเป้าบางส่วน`,
+      detail: `${product.sku} มาร์จิน ${formatPercent(decision.profit.marginPercent)} ต่ำกว่าเป้าบางส่วน`,
       status: "WARNING" as const,
     })),
     ...riskyProducts.map(({ product, profit }) => ({
@@ -398,7 +398,7 @@ export default async function SellerDashboardPage() {
             </div>
           </SectionCard>
 
-          <SectionCard title="สถานะ Manual Mode" icon={<Clock3 size={19} />}>
+          <SectionCard title="สถานะอนุมัติเอง" icon={<Clock3 size={19} />}>
             <div className="grid gap-3">
               <div className={`rounded-xl border p-4 ${toneStyles[statusTone.DANGER]}`}>
                 <p className="text-sm font-black">แคมเปญอันตราย</p>
@@ -409,7 +409,7 @@ export default async function SellerDashboardPage() {
                 <p className="mt-1 text-2xl font-black">{warningCampaigns.length}</p>
               </div>
               <div className={`rounded-xl border p-4 ${toneStyles[statusTone.GOOD]}`}>
-                <p className="text-sm font-black">สมัครได้</p>
+                <p className="text-sm font-black">อนุมัติได้</p>
                 <p className="mt-1 text-2xl font-black">{goodCampaigns.length}</p>
               </div>
             </div>

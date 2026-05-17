@@ -28,17 +28,18 @@ export default async function CampaignsPage() {
   const dangerCount = decisions.filter((item) => item.decision.recommendation === "DANGER").length;
   const goodCount = decisions.filter((item) => item.decision.recommendation === "GOOD").length;
   const source = productSource === "supabase" ? "supabase" : campaignSource;
+  const sourceLabel = source === "supabase" ? "ใช้ข้อมูลร้านจาก Supabase" : "ใช้ข้อมูลเดโมพร้อมทดลอง";
 
   return (
-    <AppShell title="แคมเปญและการตัดสินใจ" subtitle={`อนุมัติแบบ Manual Mode · ${source}`}>
+    <AppShell title="ตัดสินใจแคมเปญ" subtitle={`เช็กกำไรก่อนสมัครโปรโมชัน · ${sourceLabel}`}>
       <div className="mb-4">
         <CampaignScanPanel lastScan={lastScan} />
       </div>
 
       <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-3 md:grid-cols-3">
-          <StatBox label="รอ Manual Approval" value={`${decisions.length}`} helper="Phase 1" />
-          <StatBox label="แนะนำให้สมัคร" value={`${goodCount}`} helper="ผ่านเกณฑ์กำไร" tone="green" />
+          <StatBox label="รออนุมัติ" value={`${decisions.length}`} helper="เจ้าของร้านกดเอง" />
+          <StatBox label="น่าเข้าร่วม" value={`${goodCount}`} helper="ผ่านเกณฑ์กำไร" tone="green" />
           <StatBox label="อันตราย" value={`${dangerCount}`} helper="ควรหยุดก่อน" tone="red" />
         </div>
         <ModeSwitch />
@@ -50,13 +51,13 @@ export default async function CampaignsPage() {
           <div className="flex gap-2">
             <Link
               href="/app/campaigns/new"
-              className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-black text-white"
+              className="flex min-h-12 items-center rounded-xl bg-emerald-700 px-4 text-sm font-black text-white"
             >
               + แคมเปญ
             </Link>
-            <span className="flex items-center gap-2 rounded-lg bg-slate-200 px-3 py-2 text-xs font-black text-slate-500">
+            <span className="flex min-h-12 items-center gap-2 rounded-xl bg-slate-200 px-4 text-xs font-black text-slate-600">
               <LockKeyhole size={14} />
-              Manual
+              ต้องกดเอง
             </span>
           </div>
         }

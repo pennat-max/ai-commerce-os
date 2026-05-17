@@ -46,7 +46,7 @@ const opportunities: Opportunity[] = [
   {
     id: "raise-price",
     title: "ควรขึ้นราคา",
-    reason: "HOME-BOX-02 margin ต่ำหลังหัก voucher และค่า ads",
+    reason: "HOME-BOX-02 มาร์จินต่ำหลังหักคูปองและค่าโฆษณา",
     impact: "ขึ้นราคา 5 บาท อาจเพิ่มกำไร +฿420 ต่อวัน",
     risk: "WARNING",
     href: "/app/products/30000000-0000-0000-0000-000000000002",
@@ -54,8 +54,8 @@ const opportunities: Opportunity[] = [
   },
   {
     id: "ads-waste",
-    title: "Ads เริ่มไม่คุ้ม",
-    reason: "HOME-MOP-03 ใช้งบ ads สูง แต่กำไรหลังแคมเปญติดลบ",
+    title: "โฆษณาเริ่มไม่คุ้ม",
+    reason: "HOME-MOP-03 ใช้งบโฆษณาสูง แต่กำไรหลังแคมเปญติดลบ",
     impact: "หยุดก่อนอาจลดการขาดทุน ฿950",
     risk: "DANGER",
     href: "/app/campaigns/40000000-0000-0000-0000-000000000003",
@@ -65,7 +65,7 @@ const opportunities: Opportunity[] = [
     id: "good-campaign",
     title: "แคมเปญน่าเข้า",
     reason: "Shopee Flash Sale 6.6 ยังผ่านเกณฑ์กำไรขั้นต่ำ",
-    impact: "เหมาะกับ Manual Approval รอบนี้",
+    impact: "เหมาะให้เจ้าของร้านอนุมัติรอบนี้",
     risk: "GOOD",
     href: "/app/campaigns/40000000-0000-0000-0000-000000000001",
     icon: Megaphone,
@@ -73,25 +73,25 @@ const opportunities: Opportunity[] = [
   {
     id: "risky-campaign",
     title: "แคมเปญเสี่ยง",
-    reason: "ส่วนลดรวมกับ shipping subsidy สูงเกิน buffer ของสินค้า",
-    impact: "ควร reject หรือปรับส่วนลดก่อนเข้าแคมเปญ",
+    reason: "ส่วนลดรวมกับค่าส่งที่ร้านช่วยจ่ายสูงเกินกำไรเผื่อของสินค้า",
+    impact: "ควรปฏิเสธหรือปรับส่วนลดก่อนเข้าแคมเปญ",
     risk: "DANGER",
     href: "/app/campaigns",
     icon: ShieldAlert,
   },
   {
     id: "bundle",
-    title: "Bundle ที่ควรทำ",
+    title: "ชุดสินค้าที่ควรทำ",
     reason: "กล่องเก็บของกับชั้นวางของมีโอกาสซื้อคู่กันสูง",
-    impact: "Bundle อาจเพิ่ม AOV +18%",
+    impact: "ขายเป็นชุดอาจเพิ่มยอดต่อออเดอร์ +18%",
     risk: "GOOD",
     href: "/app/products",
     icon: Boxes,
   },
   {
     id: "creator",
-    title: "Creator ที่น่าดัน",
-    reason: "TikTok creator mock กลุ่มบ้านและครัวให้ยอด click ดี แต่ยังต้องคุม commission",
+    title: "ครีเอเตอร์ที่น่าดัน",
+    reason: "กลุ่มบ้านและครัวให้ยอดคลิกดี แต่ยังต้องคุมค่าคอมมิชชัน",
     impact: "เหมาะกับการทดลองงบเล็ก ฿300",
     risk: "WARNING",
     href: "/app/campaigns",
@@ -113,7 +113,7 @@ export default function OpportunitiesPage() {
   return (
     <AppShell
       title="โอกาสทำกำไร"
-      subtitle="AI feed แนะนำงานที่ควรทำเพื่อเพิ่มกำไรแบบ mock"
+      subtitle="งานที่ระบบแนะนำจากกำไร สต็อก และแคมเปญเดโม"
     >
       <div className="grid gap-4">
         <section className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
@@ -122,14 +122,14 @@ export default function OpportunitiesPage() {
               <Sparkles size={25} />
             </span>
             <div className="min-w-0">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
-                AI Opportunity Feed
+              <p className="text-xs font-black text-emerald-700">
+                โอกาสทำกำไรวันนี้
               </p>
               <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">
                 เลือกโอกาสที่คุ้มที่สุดก่อน
               </h2>
               <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
-                สรุปจากกำไร สต็อก ads และแคมเปญ mock เพื่อช่วยเจ้าของร้านตัดสินใจเร็วขึ้น
+                สรุปจากกำไร สต็อก ค่าโฆษณา และแคมเปญเดโม เพื่อช่วยเจ้าของร้านตัดสินใจเร็วขึ้น
               </p>
             </div>
           </div>
@@ -161,26 +161,26 @@ export default function OpportunitiesPage() {
                 </div>
 
                 <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3">
-                  <p className="text-xs font-black text-emerald-700">Expected impact</p>
+                  <p className="text-xs font-black text-emerald-700">ผลที่คาดว่าจะได้</p>
                   <p className="mt-1 text-sm font-black text-emerald-950">{item.impact}</p>
                   <p className="mt-1 text-xs font-bold text-emerald-700">{riskCopy[item.risk]}</p>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <Link
                     href={item.href}
-                    className="flex min-h-12 items-center justify-center rounded-xl border border-slate-200 bg-white px-2 text-center text-xs font-black text-slate-700"
+                    className="flex min-h-12 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-center text-sm font-black text-slate-700"
                   >
                     ดูรายละเอียด
                   </Link>
                   <button
-                    className="min-h-12 rounded-xl bg-emerald-700 px-2 text-xs font-black text-white"
+                    className="min-h-12 rounded-xl bg-emerald-700 px-3 text-sm font-black text-white"
                     type="button"
                   >
                     ทำเลย
                   </button>
                   <button
-                    className="min-h-12 rounded-xl border border-slate-200 bg-slate-50 px-2 text-xs font-black text-slate-500"
+                    className="min-h-12 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-500"
                     type="button"
                   >
                     ไว้ก่อน

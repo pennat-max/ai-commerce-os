@@ -10,22 +10,23 @@ export default async function ProductsPage() {
   const { data: products, source, error } = await listProducts();
   const lowStock = products.filter((product) => product.stock <= 10).length;
   const risky = products.filter((product) => calculateProfit(product).status !== "GOOD").length;
+  const sourceLabel = source === "supabase" ? "ข้อมูลร้านจาก Supabase" : "ข้อมูลเดโมพร้อมทดลอง";
 
   return (
-    <AppShell title="สินค้าและ SKU Risk" subtitle="ตรวจต้นทุน ราคา สต็อก และกำไรขั้นต่ำต่อ SKU">
-      <div className="mb-4 grid gap-3 md:grid-cols-4">
+    <AppShell title="สินค้าต้องเฝ้าระวัง" subtitle="ดูราคาขาย ต้นทุน กำไร และสต็อกที่ควรจัดการก่อน">
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatBox label="SKU ทั้งหมด" value={`${products.length}`} helper="ทุกช่องทาง" />
         <StatBox label="SKU เสี่ยง" value={`${risky}`} helper="ต่ำกว่าเกณฑ์" tone="orange" />
         <StatBox label="สต็อกต่ำ" value={`${lowStock}`} helper="เหลือไม่เกิน 10" tone="red" />
-        <StatBox label="Marketplace" value="3" helper="Shopee, Lazada, TikTok" tone="green" />
+        <StatBox label="ช่องทางขาย" value="3" helper="Shopee, Lazada, TikTok" tone="green" />
       </div>
       {error ? (
         <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm font-bold text-amber-900">
-          Supabase query failed, falling back to mock data: {error}
+          ตอนนี้ใช้ข้อมูลเดโมแทนข้อมูลร้านจริง: {error}
         </div>
       ) : (
-        <div className="mb-4 rounded-xl border border-sky-100 bg-white p-3 text-xs font-black text-slate-500 shadow-sm">
-          Data source: {source}
+        <div className="mb-4 rounded-xl border border-sky-100 bg-white p-3.5 text-sm font-black text-slate-600 shadow-sm">
+          {sourceLabel}
         </div>
       )}
 
@@ -34,7 +35,7 @@ export default async function ProductsPage() {
         action={
           <Link
             href="/app/products/new"
-            className="flex min-h-10 items-center gap-2 rounded-lg bg-emerald-700 px-3 text-xs font-black text-white"
+            className="flex min-h-12 items-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white"
           >
             + เพิ่มสินค้า
           </Link>
@@ -45,10 +46,10 @@ export default async function ProductsPage() {
             const profit = calculateProfit(product);
 
             return (
-              <article key={product.id} className="rounded-xl border border-sky-100 bg-white p-3">
+              <article key={product.id} className="rounded-xl border border-sky-100 bg-white p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
+                    <p className="text-xs font-black text-blue-600">
                       {platformLabel(product.platform)}
                     </p>
                     <h3 className="mt-1 truncate text-base font-black text-slate-950">
@@ -59,7 +60,7 @@ export default async function ProductsPage() {
                   <StatusBadge status={profit.status} />
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-6">
+                <div className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
                   <StatBox label="ราคาขาย" value={formatBaht(product.sellingPrice)} />
                   <StatBox label="ต้นทุน" value={formatBaht(product.cost)} />
                   <StatBox
@@ -67,7 +68,7 @@ export default async function ProductsPage() {
                     value={formatBaht(profit.netProfit)}
                     tone={profit.netProfit <= 0 ? "red" : "green"}
                   />
-                  <StatBox label="Margin" value={formatPercent(profit.marginPercent)} />
+                  <StatBox label="มาร์จิน" value={formatPercent(profit.marginPercent)} />
                   <StatBox
                     label="สต็อก"
                     value={`${product.stock}`}
@@ -76,18 +77,18 @@ export default async function ProductsPage() {
                   <StatBox label="กำไรขั้นต่ำ" value={formatBaht(product.minProfit)} />
                 </div>
 
-                <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-sky-50 px-3 py-2 text-xs font-bold text-slate-600">
-                  <span className="flex items-center gap-2">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-sky-50 px-3 py-3 text-xs font-bold text-slate-600">
+                  <span className="flex min-w-0 items-center gap-2 leading-5">
                     {profit.status === "GOOD" ? (
                       <PackageCheck size={16} className="text-emerald-600" />
                     ) : (
                       <AlertTriangle size={16} className="text-orange-500" />
                     )}
-                    Ads {formatBaht(product.adsCost)} · Fee {formatPercent(product.platformFeePercent)}
+                    ค่าโฆษณา {formatBaht(product.adsCost)} · ค่าธรรมเนียม {formatPercent(product.platformFeePercent)}
                   </span>
                   <Link
                     href={`/app/products/${product.id}`}
-                    className="rounded-md bg-slate-900 px-3 py-2 text-white"
+                    className="flex min-h-11 shrink-0 items-center rounded-lg bg-slate-900 px-4 text-sm font-black text-white"
                   >
                     รายละเอียด
                   </Link>
@@ -95,6 +96,16 @@ export default async function ProductsPage() {
               </article>
             );
           })}
+
+          {products.length === 0 ? (
+            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center">
+              <PackageCheck className="mx-auto text-emerald-700" size={28} />
+              <p className="mt-3 text-base font-black text-slate-900">ยังไม่มีสินค้าในร้านนี้</p>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
+                เพิ่มสินค้าตัวอย่างเพื่อให้ระบบช่วยคำนวณกำไรและแจ้งเตือน SKU เสี่ยง
+              </p>
+            </div>
+          ) : null}
         </div>
       </CommerceCard>
     </AppShell>

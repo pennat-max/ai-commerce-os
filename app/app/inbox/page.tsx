@@ -5,7 +5,7 @@ export default function InboxPage() {
   return (
     <AppShell
       title="กล่องแชทรวม"
-      subtitle="รวม Shopee, Lazada, TikTok Shop, Facebook, LINE และ WhatsApp แบบ mock"
+      subtitle="รวมข้อความลูกค้าหลายช่องทาง พร้อมคำตอบแนะนำสำหรับทีมขาย"
     >
       <UnifiedInbox />
     </AppShell>
