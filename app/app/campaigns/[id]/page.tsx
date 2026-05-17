@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { CampaignApprovalButtons } from "@/components/campaign-approval-buttons";
 import { CommerceCard, StatBox } from "@/components/commerce-card";
+import { CampaignProfitAdvisor } from "@/components/campaign-profit-advisor";
 import { ProfitBreakdown } from "@/components/profit-breakdown";
 import { StatusBadge } from "@/components/status";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
@@ -70,6 +71,8 @@ export default async function CampaignDetailPage({
 
         <div className="grid gap-4">
           <ProfitBreakdown product={product} campaign={campaign} />
+
+          <CampaignProfitAdvisor product={product} campaign={campaign} />
 
           <CommerceCard title="คำแนะนำการอนุมัติ">
             <CampaignApprovalButtons campaignId={campaign.id} />

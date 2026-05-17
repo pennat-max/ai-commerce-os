@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/status";
 import { StatBox } from "@/components/commerce-card";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { loadCampaignDecisionActions, saveCampaignDecisionAction } from "@/lib/client-db";
+import { analyzeCampaignProfit } from "@/lib/profit-recommendations";
 import { formatBaht, formatPercent } from "@/lib/profit";
 import type { Campaign, DecisionAction, Product } from "@/types/domain";
 
@@ -108,6 +109,11 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
     <div className="grid gap-3">
       {rows.map(({ campaign, product, decision }) => {
         const currentAction = actions[campaign.id];
+        const advice =
+          decision.recommendation !== "GOOD"
+            ? analyzeCampaignProfit(product, campaign)
+            : null;
+        const topTip = advice?.suggestions.find((item) => item.id === "combo") ?? advice?.suggestions[0];
 
         return (
           <article key={campaign.id} className="rounded-xl border border-sky-100 bg-white p-3">
@@ -120,6 +126,12 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
               </div>
               <StatusBadge status={decision.recommendation} />
             </div>
+
+            {topTip ? (
+              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900 ring-1 ring-amber-100">
+                💡 {topTip.title}: {topTip.description}
+              </p>
+            ) : null}
 
             <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5">
               <StatBox
