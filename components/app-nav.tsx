@@ -4,14 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
-  Bell,
+  Bot,
   Boxes,
   CreditCard,
   Home,
+  MessageCircle,
   PackageSearch,
-  Settings,
   ShieldCheck,
-  SlidersHorizontal,
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -23,12 +22,11 @@ type NavItem = {
 };
 
 const sellerNav: NavItem[] = [
-  { href: "/app", label: "ภาพรวม", icon: Home },
+  { href: "/app", label: "วันนี้", icon: Home },
+  { href: "/app/inbox", label: "แชท", icon: MessageCircle },
   { href: "/app/products", label: "สินค้า", icon: Boxes },
   { href: "/app/campaigns", label: "แคมเปญ", icon: PackageSearch },
-  { href: "/app/profit-rules", label: "กฎกำไร", icon: SlidersHorizontal },
-  { href: "/app/alerts", label: "แจ้งเตือน", icon: Bell },
-  { href: "/app/settings", label: "ตั้งค่า", icon: Settings },
+  { href: "/app/assistant", label: "ถาม AI", icon: Bot },
 ];
 
 const adminNav: NavItem[] = [
@@ -48,10 +46,11 @@ function isActive(pathname: string, href: string) {
 export function AppNav({ mode }: { mode: "seller" | "admin" }) {
   const pathname = usePathname();
   const items = mode === "admin" ? adminNav : sellerNav;
+  const mobileColumns = mode === "admin" ? "grid-cols-4" : "grid-cols-5";
 
   return (
     <nav
-      className="flex gap-1 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] md:flex-col md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
+      className={`grid ${mobileColumns} gap-1 pb-1 md:flex md:flex-col md:overflow-visible md:pb-0`}
       aria-label="เมนูหลัก"
     >
       {items.map((item) => {
@@ -62,7 +61,7 @@ export function AppNav({ mode }: { mode: "seller" | "admin" }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex min-h-[3.25rem] min-w-[4.25rem] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl px-2 text-center text-[10px] font-bold transition md:min-h-11 md:min-w-0 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
+            className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1.5 text-center text-[10px] font-black transition md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
               active
                 ? "bg-emerald-700 text-white shadow-sm md:shadow-none"
                 : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
