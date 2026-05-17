@@ -39,7 +39,7 @@ export default async function ProductsPage() {
           <KpiCard label="สินค้าทั้งหมด" value={`${products.length}`} helper="รวมทุกช่องทาง" icon={ShoppingBag} tone="sky" />
           <KpiCard label="กำไรน่าห่วง" value={`${risky}`} helper="ควรดูตัวเลข" icon={AlertTriangle} tone="amber" />
           <KpiCard label="สต็อกต่ำ" value={`${lowStock}`} helper="เหลือไม่เกิน 10" icon={PackageCheck} tone="rose" />
-          <KpiCard label="ช่องทางขาย" value="3" helper="Shopee Lazada TikTok" icon={Boxes} tone="emerald" />
+          <KpiCard label="ช่องทางขาย" value="3" helper="3 ช่องทางหลัก" icon={Boxes} tone="emerald" />
         </div>
 
         <PremiumSection
@@ -51,7 +51,7 @@ export default async function ProductsPage() {
             className="flex min-h-12 items-center gap-2 rounded-2xl bg-slate-950 px-4 text-sm font-black text-white"
           >
             <Plus size={17} />
-            + เพิ่มสินค้า
+            เพิ่มสินค้า
           </Link>
         }
         >
@@ -96,7 +96,7 @@ export default async function ProductsPage() {
                     ) : (
                       <AlertTriangle size={16} className="text-orange-500" />
                     )}
-                    ค่าโฆษณา {formatBaht(product.adsCost)} · ค่าธรรมเนียม {formatPercent(product.platformFeePercent)}
+                    โฆษณา {formatBaht(product.adsCost)} · ค่าธรรมเนียม {formatPercent(product.platformFeePercent)}
                   </span>
                   <Link
                     href={`/app/products/${product.id}`}

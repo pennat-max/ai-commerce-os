@@ -35,7 +35,7 @@ const opportunities: Opportunity[] = [
   {
     id: "push-product",
     title: "สินค้าควรดัน",
-    reason: "HOME-LED-01 ยังมีกำไรดีและสต็อกพอสำหรับแคมเปญสั้น",
+    reason: "โคมไฟขายดี ยังมีกำไรดีและสต็อกพอสำหรับแคมเปญสั้น",
     impact: "คาดเพิ่มกำไรวันนี้ +฿1,800",
     risk: "GOOD",
     href: "/app/products/30000000-0000-0000-0000-000000000001",
@@ -44,7 +44,7 @@ const opportunities: Opportunity[] = [
   {
     id: "restock",
     title: "ควรเติมสต๊อก",
-    reason: "HOME-RACK-04 เหลือน้อย ถ้าขายต่อเนื่องอาจเสียอันดับสินค้า",
+    reason: "ชั้นวางของเหลือน้อย ถ้าขายต่อเนื่องอาจเสียอันดับสินค้า",
     impact: "ลดความเสี่ยงพลาดยอดขาย 12 ออเดอร์",
     risk: "WARNING",
     href: "/app/products/30000000-0000-0000-0000-000000000004",
@@ -53,7 +53,7 @@ const opportunities: Opportunity[] = [
   {
     id: "raise-price",
     title: "ควรขึ้นราคา",
-    reason: "HOME-BOX-02 มาร์จินต่ำหลังหักคูปองและค่าโฆษณา",
+    reason: "กล่องเก็บของมาร์จินต่ำหลังหักคูปองและค่าโฆษณา",
     impact: "ขึ้นราคา 5 บาท อาจเพิ่มกำไร +฿420 ต่อวัน",
     risk: "WARNING",
     href: "/app/products/30000000-0000-0000-0000-000000000002",
@@ -62,7 +62,7 @@ const opportunities: Opportunity[] = [
   {
     id: "ads-waste",
     title: "โฆษณาเริ่มไม่คุ้ม",
-    reason: "HOME-MOP-03 ใช้งบโฆษณาสูง แต่กำไรหลังแคมเปญติดลบ",
+    reason: "ชุดม็อบใช้งบโฆษณาสูง แต่กำไรหลังแคมเปญติดลบ",
     impact: "หยุดก่อนอาจลดการขาดทุน ฿950",
     risk: "DANGER",
     href: "/app/campaigns/40000000-0000-0000-0000-000000000003",
@@ -135,14 +135,14 @@ export default function OpportunitiesPage() {
           icon={Sparkles}
           tone="violet"
         >
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <KpiCard label="ทำได้" value={`${goodCount}`} tone="emerald" />
             <KpiCard label="ต้องเช็ก" value={`${warningCount}`} tone="amber" />
             <KpiCard label="เสี่ยง" value={`${dangerCount}`} tone="rose" />
           </div>
         </PremiumIntro>
 
-        <PremiumSection title="รายการแนะนำ" helper="แตะดูรายละเอียด หรือเลือกทำงานจากการ์ดได้ทันที">
+        <PremiumSection title="รายการแนะนำ" helper="แตะดูรายละเอียดหรือเลือกทำงานจากการ์ดได้ทันที">
           {opportunities.map((item) => {
             const Icon = item.icon;
 
@@ -161,7 +161,7 @@ export default function OpportunitiesPage() {
                   <p className="mt-1 text-xs font-bold text-emerald-700">{riskCopy[item.risk]}</p>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="mt-4 grid grid-cols-3 gap-2">
                   <Link
                     href={item.href}
                     className="flex min-h-12 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-center text-sm font-black text-slate-700"

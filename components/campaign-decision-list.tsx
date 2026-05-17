@@ -115,8 +115,8 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
       [campaignId]: result.ok
         ? "บันทึกแล้ว"
         : result.source === "mock"
-          ? "บันทึกในเครื่องสำหรับทดสอบ"
-          : `บันทึกไม่สำเร็จ: ${result.error}`,
+          ? "บันทึกไว้ในเครื่องนี้"
+          : "บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง",
     }));
   }
 
@@ -184,7 +184,7 @@ export function CampaignDecisionList({ campaigns, products }: CampaignDecisionLi
               ) : null}
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <button
                 type="button"
                 className="min-h-12 rounded-2xl border border-emerald-200 bg-white text-sm font-black text-emerald-800 shadow-sm active:scale-[0.98]"

@@ -49,7 +49,7 @@ export default async function CampaignsPage() {
         <CampaignScanPanel lastScan={lastScan} />
 
         <div className="grid gap-3 lg:grid-cols-[1fr_360px]">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <KpiCard label="รออนุมัติ" value={`${decisions.length}`} helper="เจ้าของร้านกดเอง" icon={LockKeyhole} tone="violet" />
             <KpiCard label="น่าเข้าร่วม" value={`${goodCount}`} helper="ผ่านเกณฑ์กำไร" icon={CheckCircle2} tone="emerald" />
             <KpiCard label="ควรหยุดก่อน" value={`${dangerCount}`} helper="เสี่ยงกำไรหาย" icon={ShieldAlert} tone="rose" />
@@ -66,7 +66,7 @@ export default async function CampaignsPage() {
               className="flex min-h-12 items-center gap-2 rounded-2xl bg-slate-950 px-4 text-sm font-black text-white"
             >
               <Plus size={17} />
-              + แคมเปญ
+              เพิ่มแคมเปญ
             </Link>
           }
         >

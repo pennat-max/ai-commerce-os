@@ -165,7 +165,7 @@ export function UnifiedInbox() {
         icon={MessageCircle}
         tone="sky"
       >
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <KpiCard label="รอตอบ" value={`${waitingCount}`} helper="ควรตอบไว" icon={Clock3} tone="amber" />
           <KpiCard label="ขออนุมัติ" value={`${approvalCount}`} helper="ให้เจ้าของร้านดู" icon={ShieldCheck} tone="rose" />
           <KpiCard label="ตอบแล้ว" value={`${chats.filter((chat) => chat.status === "ตอบแล้ว").length}`} helper="ปิดงานแล้ว" icon={CheckCircle2} tone="emerald" />
@@ -181,7 +181,7 @@ export function UnifiedInbox() {
           />
         </label>
 
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {statusFilters.map((item) => (
             <button
               key={item}
@@ -233,16 +233,16 @@ export function UnifiedInbox() {
               <p className="mt-1 text-sm font-bold leading-6 text-emerald-950">{chat.aiReply}</p>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-3 gap-2">
               <button
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-3 text-sm font-black text-white"
+                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-2 text-xs font-black text-white sm:gap-2 sm:px-3 sm:text-sm"
                 type="button"
               >
                 <Send size={15} />
                 ส่งคำตอบ
               </button>
               <button
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 text-sm font-black text-amber-800"
+                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-2 text-xs font-black text-amber-800 sm:gap-2 sm:px-3 sm:text-sm"
                 type="button"
               >
                 <ShieldCheck size={15} />
@@ -250,7 +250,7 @@ export function UnifiedInbox() {
               </button>
               <Link
                 href={`/app/products/${chat.productId}`}
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-black text-slate-700"
+                className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 text-xs font-black text-slate-700 sm:gap-2 sm:px-3 sm:text-sm"
               >
                 <PackageSearch size={15} />
                 ดูสินค้า

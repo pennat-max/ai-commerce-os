@@ -73,8 +73,8 @@ export function PremiumSection({
     <section className="grid gap-3">
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-lg font-black leading-tight text-slate-950">{title}</h2>
-          {helper ? <p className="mt-1 text-sm font-bold leading-6 text-slate-500">{helper}</p> : null}
+          <h2 className="text-base font-black leading-tight text-slate-950 md:text-lg">{title}</h2>
+          {helper ? <p className="mt-1 text-xs font-bold leading-5 text-slate-500 md:text-sm md:leading-6">{helper}</p> : null}
         </div>
         {action}
       </div>
@@ -94,7 +94,7 @@ export function PremiumPanel({
 }) {
   return (
     <section
-      className={`rounded-[1.75rem] border p-4 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur ${toneStyles[tone].panel} ${className}`}
+      className={`rounded-[1.5rem] border p-4 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur md:rounded-[1.75rem] ${toneStyles[tone].panel} ${className}`}
     >
       {children}
     </section>
@@ -119,13 +119,13 @@ export function PremiumIntro({
   return (
     <PremiumPanel tone={tone} className="overflow-hidden">
       <div className="flex items-start gap-3">
-        <span className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ${toneStyles[tone].icon}`}>
-          <Icon size={24} />
+        <span className={`flex size-10 shrink-0 items-center justify-center rounded-2xl md:size-12 ${toneStyles[tone].icon}`}>
+          <Icon size={22} />
         </span>
         <div className="min-w-0 flex-1">
           <p className={`text-xs font-black ${toneStyles[tone].text}`}>{eyebrow}</p>
-          <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">{title}</h2>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{description}</p>
+          <h2 className="mt-1 text-xl font-black leading-tight text-slate-950 md:text-2xl">{title}</h2>
+          <p className="mt-2 text-xs font-bold leading-5 text-slate-600 md:text-sm md:leading-6">{description}</p>
         </div>
       </div>
       {children ? <div className="mt-4">{children}</div> : null}
@@ -147,19 +147,19 @@ export function KpiCard({
   icon?: LucideIcon;
 }) {
   return (
-    <div className={`min-h-[7.75rem] rounded-[1.5rem] border p-4 shadow-sm ${toneStyles[tone].panel}`}>
+    <div className={`min-h-[6.6rem] rounded-[1.25rem] border p-3 shadow-sm md:min-h-[7.75rem] md:rounded-[1.5rem] md:p-4 ${toneStyles[tone].panel}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-black leading-tight text-slate-500">{label}</p>
-          <p className="mt-2 text-2xl font-black leading-tight text-slate-950">{value}</p>
+          <p className="mt-2 text-xl font-black leading-tight text-slate-950 md:text-2xl">{value}</p>
         </div>
         {Icon ? (
-          <span className={`flex size-10 shrink-0 items-center justify-center rounded-2xl ${toneStyles[tone].icon}`}>
-            <Icon size={20} />
+          <span className={`flex size-9 shrink-0 items-center justify-center rounded-2xl md:size-10 ${toneStyles[tone].icon}`}>
+            <Icon size={18} />
           </span>
         ) : null}
       </div>
-      {helper ? <p className={`mt-3 text-xs font-bold leading-5 ${toneStyles[tone].text}`}>{helper}</p> : null}
+      {helper ? <p className={`mt-2 text-[11px] font-bold leading-5 md:mt-3 md:text-xs ${toneStyles[tone].text}`}>{helper}</p> : null}
     </div>
   );
 }
@@ -173,12 +173,12 @@ export function StatusSummaryCard({
 }) {
   return (
     <PremiumPanel tone="slate">
-      <h2 className="text-lg font-black text-slate-950">{title}</h2>
+      <h2 className="text-base font-black text-slate-950 md:text-lg">{title}</h2>
       <div className="mt-3 grid grid-cols-2 gap-2">
         {items.map((item) => (
           <div key={item.label} className={`rounded-2xl border p-3 ${toneStyles[item.tone].panel}`}>
             <p className="text-xs font-black text-slate-500">{item.label}</p>
-            <p className={`mt-1 text-2xl font-black ${toneStyles[item.tone].text}`}>{item.value}</p>
+            <p className={`mt-1 text-xl font-black md:text-2xl ${toneStyles[item.tone].text}`}>{item.value}</p>
           </div>
         ))}
       </div>
@@ -205,8 +205,8 @@ export function AiInsightCard({
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-black text-violet-700">คำแนะนำจาก AI</p>
-          <h2 className="mt-1 text-xl font-black leading-tight text-slate-950">{title}</h2>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{description}</p>
+          <h2 className="mt-1 text-lg font-black leading-tight text-slate-950 md:text-xl">{title}</h2>
+          <p className="mt-2 text-xs font-bold leading-5 text-slate-600 md:text-sm md:leading-6">{description}</p>
         </div>
       </div>
       <Link
@@ -236,7 +236,7 @@ export function QuickActionCard({
   return (
     <Link
       href={href}
-      className={`flex min-h-24 flex-col justify-between rounded-[1.5rem] border p-4 shadow-sm transition active:scale-[0.99] ${toneStyles[tone].panel}`}
+      className={`flex min-h-24 flex-col justify-between rounded-[1.35rem] border p-3.5 shadow-sm transition active:scale-[0.99] md:rounded-[1.5rem] md:p-4 ${toneStyles[tone].panel}`}
     >
       <span className={`flex size-10 items-center justify-center rounded-2xl ${toneStyles[tone].icon}`}>
         <Icon size={20} />
@@ -267,19 +267,19 @@ export function PremiumFeedCard({
   href?: string;
 }) {
   const content = (
-    <article className={`rounded-[1.5rem] border p-4 shadow-sm ${toneStyles[tone].panel}`}>
+    <article className={`rounded-[1.35rem] border p-3.5 shadow-sm md:rounded-[1.5rem] md:p-4 ${toneStyles[tone].panel}`}>
       <div className="flex items-start gap-3">
         {Icon ? (
-          <span className={`flex size-11 shrink-0 items-center justify-center rounded-2xl ${toneStyles[tone].icon}`}>
-            <Icon size={22} />
+          <span className={`flex size-10 shrink-0 items-center justify-center rounded-2xl md:size-11 ${toneStyles[tone].icon}`}>
+            <Icon size={20} />
           </span>
         ) : null}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base font-black leading-tight text-slate-950">{title}</h3>
+            <h3 className="text-sm font-black leading-tight text-slate-950 md:text-base">{title}</h3>
             {badge}
           </div>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{description}</p>
+          <p className="mt-2 text-xs font-bold leading-5 text-slate-600 md:text-sm md:leading-6">{description}</p>
         </div>
       </div>
       {children}
@@ -323,8 +323,8 @@ export function PremiumEmptyState({
       <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
         <Icon size={24} />
       </span>
-      <p className="mt-3 text-base font-black text-slate-950">{title}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-slate-500">{description}</p>
+      <p className="mt-3 text-sm font-black text-slate-950 md:text-base">{title}</p>
+      <p className="mt-1 text-xs font-bold leading-5 text-slate-500 md:text-sm md:leading-6">{description}</p>
     </PremiumPanel>
   );
 }

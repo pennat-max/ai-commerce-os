@@ -37,7 +37,7 @@ function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) 
 
   return (
     <div
-      className="flex min-h-8 items-center rounded-full border border-slate-100 bg-white/90 p-0.5 text-[10px] font-black text-slate-500 shadow-sm"
+      className="flex min-h-8 items-center rounded-full border border-slate-100 bg-white/90 p-0.5 text-[9px] font-black text-slate-500 shadow-sm min-[440px]:text-[10px]"
       aria-label={label}
     >
       {localeOptions.map((option) => {
@@ -48,7 +48,7 @@ function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) 
             key={option.code}
             href={getHref(option.code)}
             scroll={false}
-            className={`flex min-h-7 min-w-8 items-center justify-center rounded-full px-2 transition ${
+            className={`flex min-h-7 min-w-7 items-center justify-center rounded-full px-1.5 transition min-[440px]:min-w-8 min-[440px]:px-2 ${
               active ? "bg-violet-100 text-violet-700" : "text-slate-500"
             }`}
             aria-label={option.name}
@@ -149,7 +149,7 @@ export function AppShell({
             premiumMobileFrame ? "rounded-t-[2rem]" : ""
           }`}
         >
-          <div className={`flex items-center justify-between gap-3 py-4 ${premiumMobileFrame ? "px-6 min-[560px]:px-8" : "px-4"}`}>
+          <div className={`flex items-center justify-between gap-2 py-4 ${premiumMobileFrame ? "px-5 min-[560px]:px-8" : "px-4"}`}>
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
@@ -162,12 +162,12 @@ export function AppShell({
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-violet-50 text-violet-600 shadow-sm">
                   <Sparkles size={20} />
                 </span>
-                <span className="block truncate text-base font-black leading-tight text-slate-950">
+                <span className="hidden truncate text-base font-black leading-tight text-slate-950 min-[440px]:block">
                   AI Commerce OS
                 </span>
               </Link>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 min-[440px]:gap-2">
               <LanguageSwitcher locale={activeLocale} label={shellCopy.language} />
               <Link
                 href={notificationHref}

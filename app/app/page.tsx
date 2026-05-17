@@ -210,7 +210,7 @@ const homeCopy: Record<
       dangerBadge: "Not recommended",
       shopeeTitle: "Shopee 6.6 Mid-Year Sale",
       lazadaTitle: "Lazada Flash Sale",
-      products: "Recommended SKUs",
+      products: "Recommended products",
       expectedProfit: "Expected profit",
       expectedLoss: "Expected loss",
       reason: "Reason",

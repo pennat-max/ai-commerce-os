@@ -46,7 +46,7 @@ export function CampaignApprovalButtons({ campaignId }: { campaignId: string }) 
       <div className="mt-4 flex items-start gap-3 rounded-xl bg-slate-100 p-4">
         <LockKeyhole className="shrink-0 text-slate-500" size={22} />
         <p className="text-sm font-bold text-slate-600">
-          Phase 1 ไม่ส่งคำสั่งไป marketplace จริง — บันทึกการตัดสินใจลง Supabase เท่านั้น
+          ตอนนี้ยังไม่ส่งคำสั่งไปแพลตฟอร์มจริง ระบบจะบันทึกการตัดสินใจไว้ให้ตรวจย้อนหลังเท่านั้น
         </p>
       </div>
     </>
