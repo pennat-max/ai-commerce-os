@@ -42,7 +42,7 @@ export default async function AssistantPage() {
         what:
           riskyProducts.length > 0
             ? `พบสินค้า/แคมเปญที่ต้องดู ${riskyProducts.length + Math.max(0, campaignRows.filter((row) => row.decision.recommendation !== "GOOD").length)} รายการ`
-            : "วันนี้ยังไม่พบความเสี่ยงหลักจากข้อมูลเดโม",
+            : "วันนี้ยังไม่พบความเสี่ยงหลักจากข้อมูลตัวอย่าง",
         why: "รายการที่กำไรต่ำหรือสต็อกต่ำอาจทำให้ร้านเสียกำไร แม้ยอดขายดูดี",
         next: "เปิดดูสินค้าที่เสี่ยงและแคมเปญที่ไม่ผ่านเกณฑ์ก่อนกดอนุมัติ",
       },
@@ -113,7 +113,7 @@ export default async function AssistantPage() {
   return (
     <AppShell
       title="ถาม AI"
-      subtitle="ผู้ช่วยเดโมที่ตอบจากสินค้า แคมเปญ และสูตรกำไรในระบบ"
+      subtitle="ผู้ช่วยที่ตอบจากสินค้า แคมเปญ และสูตรกำไรในระบบ"
     >
       <AskAiAssistant questions={questions} />
     </AppShell>

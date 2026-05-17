@@ -8,8 +8,8 @@ export function CommerceCard({
   action?: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100">
-      <div className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-emerald-50/80 to-sky-50/50 px-4 py-3.5">
+    <section className="overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/90 shadow-[0_18px_45px_rgba(15,23,42,0.08)] ring-1 ring-slate-100/80 backdrop-blur">
+      <div className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-emerald-50/90 via-sky-50/80 to-violet-50/70 px-4 py-3.5">
         <h2 className="text-lg font-black leading-tight text-slate-900">{title}</h2>
         {action}
       </div>
@@ -37,7 +37,7 @@ export function StatBox({
   }[tone];
 
   return (
-    <div className="min-h-[5.5rem] rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+    <div className="min-h-[5.75rem] rounded-[1.25rem] border border-white/80 bg-white/80 p-3.5 shadow-sm">
       <p className="text-xs font-black leading-tight text-slate-500">{label}</p>
       <p className={`mt-1.5 text-xl font-black leading-tight ${toneClass}`}>{value}</p>
       {helper ? <p className="mt-1 text-xs font-bold leading-tight text-slate-400">{helper}</p> : null}

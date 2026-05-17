@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Bot, Send, Sparkles, UserRound } from "lucide-react";
+import { PremiumIntro, PremiumPanel, PremiumSection } from "@/components/premium-mobile";
 
 export type AssistantAnswer = {
   what: string;
@@ -31,48 +32,37 @@ export function AskAiAssistant({ questions }: { questions: QuickQuestion[] }) {
   );
 
   return (
-    <div className="grid gap-4">
-      <section className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-        <div className="flex items-start gap-3">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-700 text-white">
-            <Bot size={25} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-xs font-black text-emerald-700">
-              ถามผู้ช่วย AI
-            </p>
-            <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">
-              ถามผู้ช่วย AI เรื่องร้านวันนี้
-            </h2>
-            <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
-              เลือกคำถามด่วนเพื่อดูคำตอบเดโมจากข้อมูลสินค้า แคมเปญ และสูตรกำไรในระบบ
-            </p>
-          </div>
-        </div>
-      </section>
+    <div className="grid gap-5">
+      <PremiumIntro
+        eyebrow="ถามผู้ช่วย AI"
+        title="ถามเรื่องร้านวันนี้"
+        description="เลือกคำถามด่วนเพื่อดูคำตอบจากข้อมูลสินค้า แคมเปญ และสูตรกำไรในระบบ"
+        icon={Bot}
+        tone="violet"
+      />
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-        <div className="mb-3 flex items-center gap-2">
-          <Sparkles size={18} className="text-emerald-700" />
-          <h3 className="text-base font-black text-slate-950">คำถามด่วน</h3>
-        </div>
+      <PremiumSection
+        title="คำถามด่วน"
+        helper="เลือกคำถามที่เจ้าของร้านมักอยากรู้ก่อนตัดสินใจ"
+      >
         <div className="grid gap-2 sm:grid-cols-2">
           {questions.map((question) => (
             <button
               key={question.id}
-              className={`min-h-14 rounded-xl border px-3 text-left text-sm font-black leading-6 transition ${
+              className={`min-h-16 rounded-2xl border px-4 text-left text-sm font-black leading-6 shadow-sm transition active:scale-[0.99] ${
                 selectedId === question.id
-                  ? "border-emerald-700 bg-emerald-700 text-white"
-                  : "border-slate-200 bg-slate-50 text-slate-700"
+                  ? "border-slate-950 bg-slate-950 text-white"
+                  : "border-white bg-white/85 text-slate-700"
               }`}
               type="button"
               onClick={() => setSelectedId(question.id)}
             >
+              <Sparkles size={15} className="mb-2" />
               {question.question}
             </button>
           ))}
         </div>
-      </section>
+      </PremiumSection>
 
       {selectedQuestion ? (
         <section className="grid gap-3">
@@ -101,7 +91,7 @@ export function AskAiAssistant({ questions }: { questions: QuickQuestion[] }) {
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+      <PremiumPanel tone="slate" className="p-3">
         <div className="flex min-h-12 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3">
           <input
             className="min-w-0 flex-1 bg-transparent text-sm font-bold text-slate-500 outline-none"
@@ -112,12 +102,12 @@ export function AskAiAssistant({ questions }: { questions: QuickQuestion[] }) {
             className="flex size-11 items-center justify-center rounded-xl bg-slate-200 text-slate-500"
             disabled
             type="button"
-            aria-label="ส่งคำถามเดโม"
+            aria-label="ส่งคำถามตัวอย่าง"
           >
             <Send size={17} />
           </button>
         </div>
-      </section>
+      </PremiumPanel>
     </div>
   );
 }

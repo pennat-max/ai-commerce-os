@@ -11,6 +11,13 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import {
+  KpiCard,
+  PremiumFeedCard,
+  PremiumIntro,
+  PremiumSection,
+  type PremiumTone,
+} from "@/components/premium-mobile";
 import { StatusBadge } from "@/components/status";
 import type { DecisionStatus } from "@/types/domain";
 
@@ -109,59 +116,47 @@ export default function OpportunitiesPage() {
   const goodCount = opportunities.filter((item) => item.risk === "GOOD").length;
   const warningCount = opportunities.filter((item) => item.risk === "WARNING").length;
   const dangerCount = opportunities.filter((item) => item.risk === "DANGER").length;
+  const toneByRisk: Record<DecisionStatus, PremiumTone> = {
+    GOOD: "emerald",
+    WARNING: "amber",
+    DANGER: "rose",
+  };
 
   return (
     <AppShell
       title="โอกาสทำกำไร"
-      subtitle="งานที่ระบบแนะนำจากกำไร สต็อก และแคมเปญเดโม"
+      subtitle="งานที่ระบบแนะนำจากกำไร สต็อก และแคมเปญตัวอย่าง"
     >
-      <div className="grid gap-4">
-        <section className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-          <div className="flex items-start gap-3">
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-700 text-white">
-              <Sparkles size={25} />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs font-black text-emerald-700">
-                โอกาสทำกำไรวันนี้
-              </p>
-              <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">
-                เลือกโอกาสที่คุ้มที่สุดก่อน
-              </h2>
-              <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
-                สรุปจากกำไร สต็อก ค่าโฆษณา และแคมเปญเดโม เพื่อช่วยเจ้าของร้านตัดสินใจเร็วขึ้น
-              </p>
-            </div>
+      <div className="grid gap-5">
+        <PremiumIntro
+          eyebrow="โอกาสทำกำไรวันนี้"
+          title="เลือกงานที่คุ้มที่สุดก่อน"
+          description="สรุปจากกำไร สต็อก ค่าโฆษณา และแคมเปญ เพื่อช่วยเจ้าของร้านตัดสินใจเร็วขึ้น"
+          icon={Sparkles}
+          tone="violet"
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            <KpiCard label="ทำได้" value={`${goodCount}`} tone="emerald" />
+            <KpiCard label="ต้องเช็ก" value={`${warningCount}`} tone="amber" />
+            <KpiCard label="เสี่ยง" value={`${dangerCount}`} tone="rose" />
           </div>
+        </PremiumIntro>
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <SummaryTile label="ทำได้" value={`${goodCount}`} tone="green" />
-            <SummaryTile label="ต้องเช็ก" value={`${warningCount}`} tone="yellow" />
-            <SummaryTile label="เสี่ยง" value={`${dangerCount}`} tone="red" />
-          </div>
-        </section>
-
-        <section className="grid gap-3">
+        <PremiumSection title="รายการแนะนำ" helper="แตะดูรายละเอียด หรือเลือกทำงานจากการ์ดได้ทันที">
           {opportunities.map((item) => {
             const Icon = item.icon;
 
             return (
-              <article key={item.id} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
-                    <Icon size={22} />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="text-base font-black text-slate-950">{item.title}</h3>
-                      <StatusBadge status={item.risk} />
-                    </div>
-                    <p className="mt-2 text-sm font-bold leading-6 text-slate-600">{item.reason}</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3">
-                  <p className="text-xs font-black text-emerald-700">ผลที่คาดว่าจะได้</p>
+              <PremiumFeedCard
+                key={item.id}
+                icon={Icon}
+                title={item.title}
+                description={item.reason}
+                tone={toneByRisk[item.risk]}
+                badge={<StatusBadge status={item.risk} />}
+              >
+                <div className="mt-4 rounded-2xl border border-white/80 bg-white/75 p-3 shadow-sm">
+                  <p className="text-xs font-black text-slate-500">ผลที่คาดว่าจะได้</p>
                   <p className="mt-1 text-sm font-black text-emerald-950">{item.impact}</p>
                   <p className="mt-1 text-xs font-bold text-emerald-700">{riskCopy[item.risk]}</p>
                 </div>
@@ -186,34 +181,11 @@ export default function OpportunitiesPage() {
                     ไว้ก่อน
                   </button>
                 </div>
-              </article>
+              </PremiumFeedCard>
             );
           })}
-        </section>
+        </PremiumSection>
       </div>
     </AppShell>
-  );
-}
-
-function SummaryTile({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "green" | "yellow" | "red";
-}) {
-  const classes = {
-    green: "border-emerald-100 bg-emerald-50 text-emerald-800",
-    yellow: "border-amber-100 bg-amber-50 text-amber-800",
-    red: "border-rose-100 bg-rose-50 text-rose-800",
-  }[tone];
-
-  return (
-    <div className={`rounded-xl border p-3 ${classes}`}>
-      <p className="text-[11px] font-black opacity-80">{label}</p>
-      <p className="mt-1 text-2xl font-black">{value}</p>
-    </div>
   );
 }

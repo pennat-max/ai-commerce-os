@@ -61,10 +61,10 @@ export function AppNav({ mode }: { mode: "seller" | "admin" }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-1.5 text-center text-[10px] font-black transition md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
+            className={`flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl px-1.5 text-center text-[10px] font-black transition active:scale-[0.98] md:min-h-11 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-left md:text-sm ${
               active
-                ? "bg-emerald-700 text-white shadow-sm md:shadow-none"
-                : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                ? "bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,0.18)] md:bg-emerald-700 md:shadow-none"
+                : "text-slate-500 hover:bg-emerald-50 hover:text-emerald-800"
             }`}
           >
             <Icon size={21} strokeWidth={active ? 2.5 : 2} />

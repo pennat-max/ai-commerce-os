@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { runCampaignScanAction } from "@/app/app/actions";
+import { PremiumPanel } from "@/components/premium-mobile";
 
 export function CampaignScanPanel({
   lastScan,
@@ -41,13 +42,13 @@ export function CampaignScanPanel({
     : "ยังไม่เคยสแกน";
 
   return (
-    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4">
+    <PremiumPanel tone="sky">
       <div className="grid gap-3 sm:flex sm:items-center sm:justify-between">
         <div>
-          <p className="text-base font-black text-emerald-900">อัปเดตแคมเปญเดโม</p>
-          <p className="mt-1 text-sm font-bold leading-6 text-emerald-800">รอบล่าสุด {lastLabel}</p>
+          <p className="text-base font-black text-slate-950">อัปเดตแคมเปญล่าสุด</p>
+          <p className="mt-1 text-sm font-bold leading-6 text-sky-800">รอบล่าสุด {lastLabel}</p>
           {lastScan ? (
-            <p className="mt-1 text-xs font-bold leading-5 text-emerald-700">
+            <p className="mt-1 text-xs font-bold leading-5 text-sky-700">
               ใหม่ {lastScan.imported} · แก้ไข {lastScan.updated} · คำนวณใหม่ {lastScan.decisionsUpdated}
             </p>
           ) : null}
@@ -56,14 +57,14 @@ export function CampaignScanPanel({
           type="button"
           onClick={scanNow}
           disabled={loading}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-black text-white disabled:opacity-60"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 text-sm font-black text-white disabled:opacity-60"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           {loading ? "กำลังอัปเดต..." : "อัปเดตตอนนี้"}
         </button>
       </div>
-      {message ? <p className="mt-2 text-xs font-bold text-emerald-900">{message}</p> : null}
-    </div>
+      {message ? <p className="mt-3 text-xs font-bold text-sky-900">{message}</p> : null}
+    </PremiumPanel>
   );
 }
 

@@ -11,6 +11,14 @@ import {
   Send,
   ShieldCheck,
 } from "lucide-react";
+import {
+  KpiCard,
+  PremiumEmptyState,
+  PremiumFeedCard,
+  PremiumIntro,
+  PremiumSection,
+  type PremiumTone,
+} from "@/components/premium-mobile";
 
 type InboxStatus = "รอตอบ" | "ตอบแล้ว" | "ต้องอนุมัติ";
 type InboxPlatform = "Shopee" | "Lazada" | "TikTok Shop" | "Facebook" | "LINE" | "WhatsApp";
@@ -70,7 +78,7 @@ const chats: InboxChat[] = [
     time: "12:20",
     sku: "HOME-RACK-04",
     productId: "30000000-0000-0000-0000-000000000004",
-    aiReply: "ส่งเลขพัสดุให้ลูกค้าแล้ว และตั้งแจ้งเตือนติดตามสถานะจัดส่งใน dashboard ค่ะ",
+    aiReply: "ส่งเลขพัสดุให้ลูกค้าแล้ว และตั้งแจ้งเตือนติดตามสถานะจัดส่งในหน้าร้านค่ะ",
   },
   {
     id: "chat-5",
@@ -113,6 +121,12 @@ const statusClass: Record<InboxStatus, string> = {
   "ต้องอนุมัติ": "bg-rose-50 text-rose-800 ring-rose-100",
 };
 
+const statusTone: Record<InboxStatus, PremiumTone> = {
+  "รอตอบ": "amber",
+  "ตอบแล้ว": "emerald",
+  "ต้องอนุมัติ": "rose",
+};
+
 function statusIcon(status: InboxStatus) {
   if (status === "ตอบแล้ว") return <CheckCircle2 size={15} />;
   if (status === "ต้องอนุมัติ") return <ShieldCheck size={15} />;
@@ -143,30 +157,25 @@ export function UnifiedInbox() {
   const approvalCount = chats.filter((chat) => chat.status === "ต้องอนุมัติ").length;
 
   return (
-    <div className="grid gap-4">
-      <section className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-        <div className="flex items-start gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-700 text-white">
-            <MessageCircle size={23} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-xs font-black text-emerald-700">
-              กล่องแชทรวม
-            </p>
-            <h2 className="mt-1 text-2xl font-black leading-tight text-slate-950">
-              รวมแชททุกช่องทางไว้ที่เดียว
-            </h2>
-            <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
-              วันนี้มีแชทรอตอบ {waitingCount} รายการ และข้อความที่ควรขออนุมัติ {approvalCount} รายการ
-            </p>
-          </div>
+    <div className="grid gap-5">
+      <PremiumIntro
+        eyebrow="กล่องแชทรวม"
+        title="รวมแชททุกช่องทางไว้ที่เดียว"
+        description={`วันนี้มีแชทรอตอบ ${waitingCount} รายการ และข้อความที่ควรขออนุมัติ ${approvalCount} รายการ`}
+        icon={MessageCircle}
+        tone="sky"
+      >
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <KpiCard label="รอตอบ" value={`${waitingCount}`} helper="ควรตอบไว" icon={Clock3} tone="amber" />
+          <KpiCard label="ขออนุมัติ" value={`${approvalCount}`} helper="ให้เจ้าของร้านดู" icon={ShieldCheck} tone="rose" />
+          <KpiCard label="ตอบแล้ว" value={`${chats.filter((chat) => chat.status === "ตอบแล้ว").length}`} helper="ปิดงานแล้ว" icon={CheckCircle2} tone="emerald" />
         </div>
 
         <label className="mt-4 flex min-h-12 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3">
           <Search size={18} className="shrink-0 text-slate-500" />
           <input
             className="h-11 min-w-0 flex-1 bg-transparent text-sm font-bold text-slate-800 outline-none placeholder:text-slate-400"
-            placeholder="ค้นหาชื่อลูกค้า แพลตฟอร์ม หรือ SKU"
+            placeholder="ค้นหาชื่อลูกค้า ช่องทาง หรือรหัสสินค้า"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -188,35 +197,38 @@ export function UnifiedInbox() {
             </button>
           ))}
         </div>
-      </section>
+      </PremiumIntro>
 
-      <section className="grid gap-3">
+      <PremiumSection title="ข้อความล่าสุด" helper="เลือกส่งคำตอบ ขออนุมัติ หรือเปิดดูสินค้าที่เกี่ยวข้อง">
         {filteredChats.map((chat) => (
-          <article key={chat.id} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-base font-black text-slate-950">{chat.customerName}</h3>
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-black ring-1 ${platformClass[chat.platform]}`}>
-                    {chat.platform}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs font-bold text-slate-500">
-                  {chat.time} · สินค้า {chat.sku}
-                </p>
-              </div>
+          <PremiumFeedCard
+            key={chat.id}
+            icon={MessageCircle}
+            title={chat.customerName}
+            description={`${chat.time} · ${chat.platform} · รหัสสินค้า ${chat.sku}`}
+            tone={statusTone[chat.status]}
+            badge={
               <span className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black ring-1 ${statusClass[chat.status]}`}>
                 {statusIcon(chat.status)}
                 {chat.status}
               </span>
+            }
+          >
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-black ring-1 ${platformClass[chat.platform]}`}>
+                {chat.platform}
+              </span>
+              <span className="rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-black text-slate-500 ring-1 ring-slate-100">
+                รหัสสินค้า {chat.sku}
+              </span>
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div className="mt-4 rounded-2xl border border-white/80 bg-white/75 p-3 shadow-sm">
               <p className="text-xs font-black text-slate-500">ข้อความล่าสุด</p>
               <p className="mt-1 text-sm font-bold leading-6 text-slate-800">{chat.lastMessage}</p>
             </div>
 
-            <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50 p-3">
+            <div className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50/80 p-3 shadow-sm">
               <p className="text-xs font-black text-emerald-700">AI แนะนำคำตอบ</p>
               <p className="mt-1 text-sm font-bold leading-6 text-emerald-950">{chat.aiReply}</p>
             </div>
@@ -244,16 +256,17 @@ export function UnifiedInbox() {
                 ดูสินค้า
               </Link>
             </div>
-          </article>
+          </PremiumFeedCard>
         ))}
 
         {filteredChats.length === 0 ? (
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm">
-            <p className="text-base font-black text-slate-900">ไม่พบแชทที่ตรงกับตัวกรอง</p>
-            <p className="mt-1 text-sm font-bold text-slate-500">ลองค้นหาด้วย SKU หรือเลือกสถานะอื่น</p>
-          </div>
+          <PremiumEmptyState
+            title="ไม่พบแชทที่ตรงกับตัวกรอง"
+            description="ลองค้นหาด้วยรหัสสินค้า หรือเลือกสถานะอื่น"
+            icon={MessageCircle}
+          />
         ) : null}
-      </section>
+      </PremiumSection>
     </div>
   );
 }
