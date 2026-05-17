@@ -21,10 +21,16 @@ import { AppShell } from "@/components/app-shell";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { resolveLocale, type Locale, withLocalePath } from "@/lib/i18n";
 import { calculateProfit, formatBaht, formatPercent } from "@/lib/profit";
-import { listCampaigns, listProducts } from "@/lib/repositories";
+import { listAlerts, listCampaigns, listProducts } from "@/lib/repositories";
+import type { Campaign, Product } from "@/types/domain";
 
 type Accent = "blue" | "green" | "violet" | "orange" | "red";
 type PlatformLogoKey = "shopee" | "lazada" | "tiktok" | "line" | "email";
+type CampaignAnalysis = {
+  campaign: Campaign;
+  product: Product;
+  decision: ReturnType<typeof recommendCampaignDecision>;
+};
 
 const homeCopy: Record<
   Locale,
@@ -424,6 +430,7 @@ function CampaignCard({
   productLabel,
   profitLabel,
   marginLabel,
+  baselineMarginLabel,
   href,
   reasonRows,
   productCount,
@@ -435,6 +442,7 @@ function CampaignCard({
   productLabel: string;
   profitLabel: string;
   marginLabel?: string;
+  baselineMarginLabel?: string;
   href: string;
   reasonRows?: Array<{ label: string; value: string; danger?: boolean }>;
   productCount: number;
@@ -471,7 +479,7 @@ function CampaignCard({
             <span className="text-slate-500">{copy.expectedProfit}</span>
             <span className="text-right font-black text-emerald-600">{marginLabel}</span>
             <span className="text-base font-black text-emerald-700">{profitLabel}</span>
-            <span className="text-right font-black text-emerald-600">18.6%</span>
+            <span className="text-right font-black text-emerald-600">{baselineMarginLabel}</span>
           </div>
           <Link
             href={href}
@@ -535,6 +543,125 @@ function ShortcutTile({
   );
 }
 
+function estimateDailyUnits(product: Product) {
+  if (product.stock <= 0) return 0;
+  return Math.max(1, Math.min(8, Math.ceil(product.stock / 12)));
+}
+
+function platformLogoFromProduct(product: Product): PlatformLogoKey {
+  return product.platform === "tiktok" ? "tiktok" : product.platform;
+}
+
+function trendFromValue(value: number, divisor: number) {
+  if (value <= 0) return "0.0%";
+  return formatPercent(Math.min(49.9, Math.max(1.2, value / divisor)));
+}
+
+function buildInsight({
+  locale,
+  copy,
+  dangerCampaign,
+  lowStockProduct,
+  goodCampaign,
+  healthyMargin,
+  hrefFor,
+}: {
+  locale: Locale;
+  copy: (typeof homeCopy)[Locale]["insight"];
+  dangerCampaign?: CampaignAnalysis;
+  lowStockProduct?: Product;
+  goodCampaign?: CampaignAnalysis;
+  healthyMargin: number;
+  hrefFor: (path: string) => string;
+}) {
+  if (dangerCampaign) {
+    const campaignName = dangerCampaign.campaign.name;
+    const loss = formatBaht(dangerCampaign.decision.profit.netProfit);
+
+    return {
+      label: copy.label,
+      headline:
+        locale === "zh"
+          ? `建议先暂停 ${campaignName}`
+          : locale === "en"
+            ? `Stop ${campaignName} before approving`
+            : `ควรหยุด ${campaignName} ก่อนอนุมัติ`,
+      subtext:
+        locale === "zh"
+          ? `系统测算该活动可能亏损 ${loss}，建议拒绝或调价后再参加`
+          : locale === "en"
+            ? `Estimated campaign loss is ${loss}. Reject it or adjust price before joining.`
+            : `ระบบประเมินว่าแคมเปญนี้อาจขาดทุน ${loss} ควรปฏิเสธหรือปรับราคาก่อน`,
+      action: copy.action,
+      href: hrefFor(`/app/campaigns/${dangerCampaign.campaign.id}`),
+    };
+  }
+
+  if (lowStockProduct) {
+    return {
+      label: copy.label,
+      headline:
+        locale === "zh"
+          ? `${lowStockProduct.name} 库存偏低`
+          : locale === "en"
+            ? `${lowStockProduct.name} is running low`
+            : `${lowStockProduct.name} ใกล้หมดสต็อก`,
+      subtext:
+        locale === "zh"
+          ? `当前库存剩 ${lowStockProduct.stock} 件，建议补货后再推活动`
+          : locale === "en"
+            ? `Only ${lowStockProduct.stock} units left. Restock before pushing more campaigns.`
+            : `เหลือ ${lowStockProduct.stock} ชิ้น ควรเติมสต็อกก่อนดันแคมเปญเพิ่ม`,
+      action: copy.action,
+      href: hrefFor(`/app/products/${lowStockProduct.id}`),
+    };
+  }
+
+  if (goodCampaign) {
+    return {
+      label: copy.label,
+      headline:
+        locale === "zh"
+          ? `${goodCampaign.campaign.name} 可以参加`
+          : locale === "en"
+            ? `${goodCampaign.campaign.name} is ready to join`
+            : `${goodCampaign.campaign.name} น่าเข้าร่วม`,
+      subtext:
+        locale === "zh"
+          ? `预计利润 ${formatBaht(goodCampaign.decision.profit.netProfit)}，毛利率 ${formatPercent(
+              goodCampaign.decision.profit.marginPercent,
+            )}`
+          : locale === "en"
+            ? `Estimated profit ${formatBaht(goodCampaign.decision.profit.netProfit)} with ${formatPercent(
+                goodCampaign.decision.profit.marginPercent,
+              )} margin.`
+            : `คาดว่ากำไร ${formatBaht(goodCampaign.decision.profit.netProfit)} มาร์จิน ${formatPercent(
+                goodCampaign.decision.profit.marginPercent,
+              )}`,
+      action: copy.action,
+      href: hrefFor(`/app/campaigns/${goodCampaign.campaign.id}`),
+    };
+  }
+
+  return {
+    label: copy.label,
+    headline:
+      locale === "zh"
+        ? "店铺状态健康"
+        : locale === "en"
+          ? "Store health looks good"
+          : "ภาพรวมร้านค้าดูแข็งแรง",
+    subtext:
+      locale === "zh"
+        ? `当前平均毛利率 ${formatPercent(healthyMargin)}，暂无高风险活动`
+        : locale === "en"
+          ? `Average margin is ${formatPercent(healthyMargin)} with no high-risk campaigns.`
+          : `มาร์จินเฉลี่ย ${formatPercent(healthyMargin)} และยังไม่มีแคมเปญเสี่ยงสูง`,
+    action: copy.action,
+    href: hrefFor("/app/opportunities"),
+  };
+}
+
 export default async function SellerDashboardPage({
   searchParams,
 }: {
@@ -544,12 +671,17 @@ export default async function SellerDashboardPage({
   const locale = resolveLocale(params.lang);
   const copy = homeCopy[locale];
   const hrefFor = (path: string) => withLocalePath(path, locale);
-  const [productsResult, campaignsResult] = await Promise.all([listProducts(), listCampaigns()]);
+  const [productsResult, campaignsResult, alertsResult] = await Promise.all([
+    listProducts(),
+    listCampaigns(),
+    listAlerts(),
+  ]);
 
   const products = productsResult.data;
   const campaigns = campaignsResult.data;
+  const alerts = alertsResult.data;
   const productById = new Map(products.map((product) => [product.id, product]));
-  const campaignRows = campaigns.flatMap((campaign) => {
+  const campaignRows: CampaignAnalysis[] = campaigns.flatMap((campaign) => {
     const product = productById.get(campaign.productId);
     if (!product) return [];
 
@@ -561,22 +693,59 @@ export default async function SellerDashboardPage({
   const dangerProducts = productProfits.filter(({ profit }) => profit.status === "DANGER");
   const warningProducts = productProfits.filter(({ profit }) => profit.status === "WARNING");
   const lowStockProducts = products.filter((product) => product.stock <= 10);
-  const dangerCampaigns = campaignRows.filter(({ decision }) => decision.recommendation === "DANGER");
+  const dangerCampaigns = campaignRows
+    .filter(({ decision }) => decision.recommendation === "DANGER")
+    .sort((a, b) => a.decision.profit.netProfit - b.decision.profit.netProfit);
   const warningCampaigns = campaignRows.filter(({ decision }) => decision.recommendation === "WARNING");
-  const goodCampaigns = campaignRows.filter(({ decision }) => decision.recommendation === "GOOD");
+  const goodCampaigns = campaignRows
+    .filter(({ decision }) => decision.recommendation === "GOOD")
+    .sort((a, b) => b.decision.profit.netProfit - a.decision.profit.netProfit);
 
-  const recommendedCampaign = goodCampaigns[0] ?? warningCampaigns[0] ?? campaignRows[0];
-  const blockedCampaign = dangerCampaigns[0] ?? warningCampaigns[0] ?? campaignRows[0];
+  const recommendedCampaign = goodCampaigns[0];
+  const blockedCampaign = dangerCampaigns[0];
   const displayName = "Alex";
-  const demoSales = 89420;
-  const demoProfit = 18562;
-  const demoOrders = 412;
-  const demoMarginPercent = 20.8;
-  const focusLoss = Math.max(6, dangerProducts.length + dangerCampaigns.length);
-  const focusLowProfit = Math.max(12, warningProducts.length + warningCampaigns.length);
-  const focusPending = Math.max(5, campaignRows.length);
-  const focusLowStock = Math.max(8, lowStockProducts.length);
-  const extraProductCount = Math.max(1, products.length - 3);
+  const estimatedUnits = new Map(products.map((product) => [product.id, estimateDailyUnits(product)]));
+  const todaySales = products.reduce(
+    (sum, product) => sum + product.sellingPrice * (estimatedUnits.get(product.id) ?? 0),
+    0,
+  );
+  const todayProfit = productProfits.reduce(
+    (sum, { product, profit }) => sum + profit.netProfit * (estimatedUnits.get(product.id) ?? 0),
+    0,
+  );
+  const todayOrders =
+    products.reduce((sum, product) => sum + (estimatedUnits.get(product.id) ?? 0), 0) +
+    campaignRows.length;
+  const averageMargin =
+    productProfits.length === 0
+      ? 0
+      : productProfits.reduce((sum, { profit }) => sum + profit.marginPercent, 0) /
+        productProfits.length;
+  const salesTrend = trendFromValue(todaySales, Math.max(1, products.length * 1200));
+  const profitTrend = trendFromValue(Math.max(todayProfit, 0), Math.max(1, products.length * 180));
+  const orderTrend = trendFromValue(todayOrders, Math.max(1, products.length * 4));
+  const marginTrend = trendFromValue(averageMargin, 8);
+  const focusLoss = dangerProducts.length + dangerCampaigns.length;
+  const focusLowProfit = warningProducts.length + warningCampaigns.length;
+  const focusPending = campaignRows.length;
+  const focusLowStock = lowStockProducts.length;
+  const unreadAlerts = alerts.filter((alert) => !alert.isRead).length;
+  const alertBadgeCount = Math.min(99, unreadAlerts || alerts.length);
+  const recommendedBaselineMargin = recommendedCampaign
+    ? calculateProfit(recommendedCampaign.product).marginPercent
+    : 0;
+  const extraProductCount = recommendedCampaign
+    ? Math.max(1, products.filter((product) => product.platform === recommendedCampaign.product.platform).length - 1)
+    : Math.max(1, products.length - 1);
+  const insight = buildInsight({
+    locale,
+    copy: copy.insight,
+    dangerCampaign: blockedCampaign,
+    lowStockProduct: lowStockProducts[0],
+    goodCampaign: recommendedCampaign,
+    healthyMargin: averageMargin,
+    hrefFor,
+  });
 
   return (
     <AppShell
@@ -585,6 +754,7 @@ export default async function SellerDashboardPage({
       showPageHeader={false}
       premiumMobileFrame
       locale={locale}
+      notificationCount={alertBadgeCount}
     >
       <div className="grid gap-5">
         <section className="flex flex-wrap items-end justify-between gap-3">
@@ -594,13 +764,10 @@ export default async function SellerDashboardPage({
             </h1>
             <p className="mt-2 text-xs font-bold text-slate-500">{copy.pageSubtitle}</p>
           </div>
-          <button
-            type="button"
-            className="flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3 text-xs font-black text-slate-700 shadow-sm min-[560px]:px-4"
-          >
+          <span className="flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3 text-xs font-black text-slate-700 shadow-sm min-[560px]:px-4">
             <CalendarDays size={18} className="text-slate-500" />
             {copy.date}
-          </button>
+          </span>
         </section>
 
         <section className="flex items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -612,10 +779,10 @@ export default async function SellerDashboardPage({
         </section>
 
         <section className="grid grid-cols-4 gap-2 min-[560px]:gap-3">
-          <KpiTile label={copy.kpi.sales} value={formatBaht(demoSales)} trend="24.5%" compareLabel={copy.kpi.compare} icon={ShoppingBag} accent="blue" />
-          <KpiTile label={copy.kpi.profit} value={formatBaht(demoProfit)} trend="31.2%" compareLabel={copy.kpi.compare} icon={Database} accent="green" />
-          <KpiTile label={copy.kpi.orders} value={`${demoOrders}`} trend="18.3%" compareLabel={copy.kpi.compare} icon={PieChart} accent="violet" />
-          <KpiTile label={copy.kpi.margin} value={formatPercent(demoMarginPercent)} trend="2.4%" compareLabel={copy.kpi.compare} icon={TrendingUp} accent="orange" />
+          <KpiTile label={copy.kpi.sales} value={formatBaht(todaySales)} trend={salesTrend} compareLabel={copy.kpi.compare} icon={ShoppingBag} accent="blue" />
+          <KpiTile label={copy.kpi.profit} value={formatBaht(todayProfit)} trend={profitTrend} compareLabel={copy.kpi.compare} icon={Database} accent="green" />
+          <KpiTile label={copy.kpi.orders} value={`${todayOrders}`} trend={orderTrend} compareLabel={copy.kpi.compare} icon={PieChart} accent="violet" />
+          <KpiTile label={copy.kpi.margin} value={formatPercent(averageMargin)} trend={marginTrend} compareLabel={copy.kpi.compare} icon={TrendingUp} accent="orange" />
         </section>
 
         <section className="rounded-[1.35rem] border border-slate-100 bg-white/90 p-4 shadow-[0_14px_36px_rgba(15,23,42,0.06)]">
@@ -646,29 +813,38 @@ export default async function SellerDashboardPage({
             {recommendedCampaign ? (
               <CampaignCard
                 type="good"
-                title={copy.campaign.shopeeTitle}
-                productLabel={copy.campaign.products}
-                profitLabel={formatBaht(2450)}
-                marginLabel="18.4%"
+                title={recommendedCampaign.campaign.name}
+                productLabel={recommendedCampaign.product.name}
+                profitLabel={formatBaht(recommendedCampaign.decision.profit.netProfit)}
+                marginLabel={formatPercent(recommendedCampaign.decision.profit.marginPercent)}
                 href={hrefFor(`/app/campaigns/${recommendedCampaign.campaign.id}`)}
                 productCount={extraProductCount}
-                platform="shopee"
+                platform={platformLogoFromProduct(recommendedCampaign.product)}
                 copy={copy.campaign}
+                baselineMarginLabel={formatPercent(recommendedBaselineMargin)}
               />
             ) : null}
             {blockedCampaign ? (
               <CampaignCard
                 type="danger"
-                title={copy.campaign.lazadaTitle}
+                title={blockedCampaign.campaign.name}
                 productLabel={copy.campaign.reason}
-                profitLabel={formatBaht(-320)}
+                profitLabel={formatBaht(blockedCampaign.decision.profit.netProfit)}
                 href={hrefFor(`/app/campaigns/${blockedCampaign.campaign.id}`)}
                 productCount={extraProductCount}
-                platform="lazada"
+                platform={platformLogoFromProduct(blockedCampaign.product)}
                 copy={copy.campaign}
                 reasonRows={[
-                  { label: copy.campaign.lowMargin, value: "-12.5%", danger: true },
-                  { label: copy.campaign.highShipping, value: "-฿18.00", danger: true },
+                  {
+                    label: copy.campaign.lowMargin,
+                    value: formatPercent(blockedCampaign.decision.profit.marginPercent),
+                    danger: true,
+                  },
+                  {
+                    label: copy.campaign.highShipping,
+                    value: formatBaht(blockedCampaign.product.shippingCost),
+                    danger: true,
+                  },
                 ]}
               />
             ) : null}
@@ -680,23 +856,23 @@ export default async function SellerDashboardPage({
             <div>
               <p className="flex items-center gap-2 text-sm font-black text-slate-950">
                 <Sparkles size={20} className="text-violet-600" />
-                {copy.insight.label}
+                {insight.label}
               </p>
               <h2 className="mt-4 text-base font-black leading-tight text-slate-950">
-                {copy.insight.headline}
+                {insight.headline}
               </h2>
               <p className="mt-2 text-xs font-bold leading-6 text-slate-500">
-                {copy.insight.subtext}
+                {insight.subtext}
               </p>
             </div>
             <span className="hidden size-24 items-center justify-center rounded-full bg-slate-950 text-cyan-300 shadow-[0_16px_40px_rgba(15,23,42,0.18)] min-[560px]:flex">
               <Bot size={48} />
             </span>
             <Link
-              href={hrefFor("/app/assistant")}
+              href={insight.href}
               className="flex min-h-11 items-center justify-center rounded-xl bg-violet-600 px-5 text-xs font-black text-white shadow-sm"
             >
-              {copy.insight.action}
+              {insight.action}
             </Link>
           </div>
         </section>

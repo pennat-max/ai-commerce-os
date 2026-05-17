@@ -69,6 +69,7 @@ export function AppShell({
   showPageHeader = true,
   premiumMobileFrame = false,
   locale,
+  notificationCount = 8,
 }: {
   children: React.ReactNode;
   title: string;
@@ -77,6 +78,7 @@ export function AppShell({
   showPageHeader?: boolean;
   premiumMobileFrame?: boolean;
   locale?: Locale;
+  notificationCount?: number;
 }) {
   const session = useAppSession();
   const searchParams = useSearchParams();
@@ -151,13 +153,13 @@ export function AppShell({
         >
           <div className={`flex items-center justify-between gap-2 py-4 ${premiumMobileFrame ? "px-5 min-[560px]:px-8" : "px-4"}`}>
             <div className="flex min-w-0 items-center gap-3">
-              <button
-                type="button"
+              <Link
+                href={profileHref}
                 className="flex size-9 shrink-0 items-center justify-center rounded-2xl text-slate-700"
                 aria-label={shellCopy.openMenu}
               >
                 <Menu size={23} />
-              </button>
+              </Link>
               <Link href={homeHref} className="flex min-w-0 items-center gap-2.5">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-violet-50 text-violet-600 shadow-sm">
                   <Sparkles size={20} />
@@ -176,7 +178,7 @@ export function AppShell({
               >
                 <Bell size={18} />
                 <span className="absolute -right-0.5 -top-1 flex size-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white">
-                  8
+                  {notificationCount}
                 </span>
               </Link>
               <Link
