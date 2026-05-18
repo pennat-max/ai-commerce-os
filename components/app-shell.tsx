@@ -37,7 +37,7 @@ function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) 
 
   return (
     <div
-      className="flex min-h-8 items-center rounded-full border border-slate-100 bg-white/90 p-0.5 text-[9px] font-black text-slate-500 shadow-sm min-[440px]:text-[10px]"
+      className="flex min-h-10 items-center rounded-full border border-slate-100 bg-white/90 p-0.5 text-[10px] font-black text-slate-500 shadow-sm"
       aria-label={label}
     >
       {localeOptions.map((option) => {
@@ -48,7 +48,7 @@ function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) 
             key={option.code}
             href={getHref(option.code)}
             scroll={false}
-            className={`flex min-h-7 min-w-7 items-center justify-center rounded-full px-1.5 transition min-[440px]:min-w-8 min-[440px]:px-2 ${
+            className={`flex min-h-9 min-w-9 items-center justify-center rounded-full px-2 transition ${
               active ? "bg-violet-100 text-violet-700" : "text-slate-500"
             }`}
             aria-label={option.name}

@@ -835,7 +835,7 @@ export default async function SellerDashboardPage({
         <section className="rounded-[1.35rem] border border-slate-100 bg-white/90 p-4 shadow-[0_14px_36px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-sm font-black text-slate-950">{copy.focus.title}</h2>
-            <Link href={hrefFor("/app/alerts")} className="flex items-center gap-1 text-xs font-black text-blue-600">
+            <Link href={hrefFor("/app/alerts")} className="flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-black text-blue-600">
               {copy.focus.viewAll}
               <ArrowRight size={16} />
             </Link>
@@ -851,7 +851,7 @@ export default async function SellerDashboardPage({
         <section className="rounded-[1.35rem] border border-slate-100 bg-white/90 p-4 shadow-[0_14px_36px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-sm font-black text-slate-950">สรุปงานออเดอร์และเคลม</h2>
-            <Link href={hrefFor("/app/orders")} className="flex items-center gap-1 text-xs font-black text-blue-600">
+            <Link href={hrefFor("/app/orders")} className="flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-black text-blue-600">
               ดูออเดอร์
               <ArrowRight size={16} />
             </Link>
@@ -895,7 +895,7 @@ export default async function SellerDashboardPage({
         <section className="grid gap-4">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-sm font-black text-slate-950">{copy.campaign.title}</h2>
-            <Link href={hrefFor("/app/campaigns")} className="flex items-center gap-1 text-xs font-black text-blue-600">
+            <Link href={hrefFor("/app/campaigns")} className="flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-black text-blue-600">
               {copy.campaign.viewAll}
               <ArrowRight size={16} />
             </Link>
