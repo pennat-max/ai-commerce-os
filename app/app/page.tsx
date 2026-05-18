@@ -24,8 +24,7 @@ import type { LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { resolveLocale, type Locale, withLocalePath } from "@/lib/i18n";
-import { mockReturnCases } from "@/lib/operations-mock";
-import { listOrders, packingStatuses } from "@/lib/operations-repository";
+import { listOrders, listReturnCases, packingStatuses } from "@/lib/operations-repository";
 import { calculateProfit, formatBaht, formatPercent } from "@/lib/profit";
 import { listAlerts, listCampaigns, listProducts } from "@/lib/repositories";
 import type { Campaign, Product } from "@/types/domain";
@@ -711,17 +710,19 @@ export default async function SellerDashboardPage({
   const locale = resolveLocale(params.lang);
   const copy = homeCopy[locale];
   const hrefFor = (path: string) => withLocalePath(path, locale);
-  const [productsResult, campaignsResult, alertsResult, ordersResult] = await Promise.all([
+  const [productsResult, campaignsResult, alertsResult, ordersResult, returnCasesResult] = await Promise.all([
     listProducts(),
     listCampaigns(),
     listAlerts(),
     listOrders(),
+    listReturnCases(),
   ]);
 
   const products = productsResult.data;
   const campaigns = campaignsResult.data;
   const alerts = alertsResult.data;
   const orders = ordersResult.data;
+  const returnCases = returnCasesResult.data;
   const productById = new Map(products.map((product) => [product.id, product]));
   const campaignRows: CampaignAnalysis[] = campaigns.flatMap((campaign) => {
     const product = productById.get(campaign.productId);
@@ -773,10 +774,10 @@ export default async function SellerDashboardPage({
   const focusLowStock = lowStockProducts.length;
   const pendingPackOrders = orders.filter((order) => packingStatuses.has(order.status)).length;
   const readyToShipOrders = orders.filter((order) => order.status === "พร้อมส่ง").length;
-  const returnedCases = mockReturnCases.filter((item) =>
+  const returnedCases = returnCases.filter((item) =>
     item.status === "สินค้าตีกลับ" || item.reason === "ลูกค้าไม่รับสินค้า",
   ).length;
-  const pendingClaimCases = mockReturnCases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
+  const pendingClaimCases = returnCases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
   const unreadAlerts = alerts.filter((alert) => !alert.isRead).length;
   const alertBadgeCount = Math.min(99, unreadAlerts || alerts.length);
   const recommendedBaselineMargin = recommendedCampaign

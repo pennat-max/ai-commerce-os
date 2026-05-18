@@ -20,12 +20,11 @@ import {
   type PremiumTone,
 } from "@/components/premium-mobile";
 import {
-  mockOrders,
-  mockReturnCases,
   type MockReturnCase,
   type OperationPlatform,
   type ReturnCaseStatus,
 } from "@/lib/operations-mock";
+import { listOrders, listReturnCases } from "@/lib/operations-repository";
 import { formatBaht } from "@/lib/profit";
 
 const statusTone: Record<ReturnCaseStatus, PremiumTone> = {
@@ -52,9 +51,15 @@ function iconForStatus(status: ReturnCaseStatus) {
   return RotateCcw;
 }
 
-function ReturnCaseCard({ item }: { item: MockReturnCase }) {
+function ReturnCaseCard({
+  item,
+  relatedOrderNumbers,
+}: {
+  item: MockReturnCase;
+  relatedOrderNumbers: Set<string>;
+}) {
   const Icon = iconForStatus(item.status);
-  const relatedOrderExists = mockOrders.some((order) => order.orderNumber === item.orderNumber);
+  const relatedOrderExists = relatedOrderNumbers.has(item.orderNumber);
 
   return (
     <PremiumFeedCard
@@ -116,12 +121,17 @@ function ReturnCaseCard({ item }: { item: MockReturnCase }) {
   );
 }
 
-export default function ReturnsPage() {
-  const activeCases = mockReturnCases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
-  const damageCases = mockReturnCases.filter((item) =>
+export default async function ReturnsPage() {
+  const [{ data: cases }, { data: orders }] = await Promise.all([
+    listReturnCases(),
+    listOrders(),
+  ]);
+  const relatedOrderNumbers = new Set(orders.map((order) => order.orderNumber));
+  const activeCases = cases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
+  const damageCases = cases.filter((item) =>
     ["เคลมสินค้าเสียหาย", "เสียหายขายต่อไม่ได้"].includes(item.status),
   ).length;
-  const totalImpact = mockReturnCases.reduce((sum, item) => sum + item.costImpact, 0);
+  const totalImpact = cases.reduce((sum, item) => sum + item.costImpact, 0);
 
   return (
     <AppShell
@@ -168,7 +178,7 @@ export default function ReturnsPage() {
         </PremiumSection>
 
         <PremiumSection title="รายการคืน/เคลม" helper="แต่ละการ์ดมีต้นทุน หลักฐาน และ action ที่ควรทำต่อ">
-          {mockReturnCases.length === 0 ? (
+          {cases.length === 0 ? (
             <PremiumEmptyState
               title="ยังไม่มีเคสคืนหรือเคลม"
               description="ถ้ามีตีกลับ เคลม หรือขอคืนเงิน ระบบจะแสดงรายการพร้อมหลักฐานและ action ที่ควรทำ"
@@ -176,8 +186,8 @@ export default function ReturnsPage() {
             />
           ) : (
             <div className="grid gap-3 lg:grid-cols-2">
-              {mockReturnCases.map((item) => (
-                <ReturnCaseCard key={item.id} item={item} />
+              {cases.map((item) => (
+                <ReturnCaseCard key={item.id} item={item} relatedOrderNumbers={relatedOrderNumbers} />
               ))}
             </div>
           )}
