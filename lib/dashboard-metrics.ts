@@ -1,4 +1,3 @@
-import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { calculateProfit, formatBaht } from "@/lib/profit";
 import type { Campaign, DashboardMetric, Product } from "@/types/domain";
 

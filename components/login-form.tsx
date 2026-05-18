@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { ensureCommerceProfile } from "@/lib/auth/ensure-profile";
 import { getHomePathForRole } from "@/lib/auth/routes";
-import type { UserRole } from "@/types/domain";
 
 export function LoginForm() {
   const searchParams = useSearchParams();

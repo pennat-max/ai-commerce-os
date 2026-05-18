@@ -1,8 +1,6 @@
 import { mockDiscoverCampaigns } from "@/lib/marketplaces/mock-campaigns";
 import type {
   MarketplaceAdapter,
-  MarketplaceCredentials,
-  SyncProductInput,
   SyncResult,
 } from "@/lib/marketplaces/types";
 import type { Product } from "@/types/domain";
