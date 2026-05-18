@@ -204,6 +204,8 @@ Create these users in Supabase Authentication, then run `supabase/seed-auth.sql`
 
 ## Phase 2+ Integrations
 
+Lazada live API work is still plan-only. See `docs/lazada-integration-plan.md` for the proposed OAuth, token storage, sync, webhook, retry, audit, and rollout design before implementing real marketplace calls.
+
 Set optional env vars in `.env.local` / Vercel:
 
 | Variable | Purpose |
