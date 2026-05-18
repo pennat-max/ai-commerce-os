@@ -9,6 +9,7 @@ import {
   Megaphone,
   MessageCircle,
   Package,
+  PackageCheck,
   PieChart,
   ShoppingBag,
   Sparkles,
@@ -79,6 +80,7 @@ const homeCopy: Record<
     shortcuts: {
       title: string;
       products: string;
+      orders: string;
       campaigns: string;
       inbox: string;
       reports: string;
@@ -131,6 +133,7 @@ const homeCopy: Record<
     shortcuts: {
       title: "ทางลัด",
       products: "สินค้า",
+      orders: "ออเดอร์",
       campaigns: "แคมเปญ",
       inbox: "ข้อความ",
       reports: "รายงาน",
@@ -182,6 +185,7 @@ const homeCopy: Record<
     shortcuts: {
       title: "快捷入口",
       products: "商品",
+      orders: "订单",
       campaigns: "活动",
       inbox: "消息",
       reports: "报告",
@@ -233,6 +237,7 @@ const homeCopy: Record<
     shortcuts: {
       title: "Shortcuts",
       products: "Products",
+      orders: "Orders",
       campaigns: "Campaigns",
       inbox: "Inbox",
       reports: "Reports",
@@ -879,8 +884,9 @@ export default async function SellerDashboardPage({
 
         <section className="grid gap-4">
           <h2 className="text-sm font-black text-slate-950">{copy.shortcuts.title}</h2>
-          <div className="grid grid-cols-5 gap-2 min-[560px]:gap-3">
+          <div className="grid grid-cols-3 gap-2 min-[560px]:grid-cols-6 min-[560px]:gap-3">
             <ShortcutTile href={hrefFor("/app/products")} icon={Package} label={copy.shortcuts.products} accent="blue" />
+            <ShortcutTile href={hrefFor("/app/orders")} icon={PackageCheck} label={copy.shortcuts.orders} accent="green" />
             <ShortcutTile href={hrefFor("/app/campaigns")} icon={Megaphone} label={copy.shortcuts.campaigns} accent="green" />
             <ShortcutTile href={hrefFor("/app/inbox")} icon={MessageCircle} label={copy.shortcuts.inbox} accent="violet" />
             <ShortcutTile href={hrefFor("/app/opportunities")} icon={BarChart3} label={copy.shortcuts.reports} accent="orange" />

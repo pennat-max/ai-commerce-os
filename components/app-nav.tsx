@@ -8,6 +8,7 @@ import {
   Home,
   Menu,
   MessageCircle,
+  PackageCheck,
   Sparkles,
   ShieldCheck,
   Users,
@@ -25,6 +26,7 @@ const sellerNav: NavItem[] = [
   { href: "/app", labelKey: "home", icon: Home },
   { href: "/app/inbox", labelKey: "inbox", icon: MessageCircle },
   { href: "/app/opportunities", labelKey: "opportunities", icon: BarChart3 },
+  { href: "/app/orders", labelKey: "orders", icon: PackageCheck },
   { href: "/app/assistant", labelKey: "assistant", icon: Sparkles },
   { href: "/app/settings", labelKey: "menu", icon: Menu },
 ];
@@ -46,7 +48,7 @@ function isActive(pathname: string, href: string) {
 export function AppNav({ mode, locale }: { mode: "seller" | "admin"; locale: Locale }) {
   const pathname = usePathname();
   const items = mode === "admin" ? adminNav : sellerNav;
-  const mobileColumns = mode === "admin" ? "grid-cols-4" : "grid-cols-5";
+  const mobileColumns = mode === "admin" ? "grid-cols-4" : "grid-cols-6";
   const labels = mode === "admin" ? navCopy[locale].admin : navCopy[locale].seller;
 
   return (

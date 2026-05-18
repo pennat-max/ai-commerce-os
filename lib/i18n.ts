@@ -64,7 +64,7 @@ export const appShellCopy: Record<
 export const navCopy: Record<
   Locale,
   {
-    seller: Record<"home" | "inbox" | "opportunities" | "assistant" | "menu", string>;
+    seller: Record<"home" | "inbox" | "opportunities" | "orders" | "assistant" | "menu", string>;
     admin: Record<"overview" | "customers" | "plans" | "usage", string>;
   }
 > = {
@@ -73,6 +73,7 @@ export const navCopy: Record<
       home: "หน้าหลัก",
       inbox: "ข้อความ",
       opportunities: "โอกาส",
+      orders: "ออเดอร์",
       assistant: "AI Assistant",
       menu: "เมนู",
     },
@@ -88,6 +89,7 @@ export const navCopy: Record<
       home: "首页",
       inbox: "消息",
       opportunities: "机会",
+      orders: "订单",
       assistant: "AI 助手",
       menu: "菜单",
     },
@@ -103,6 +105,7 @@ export const navCopy: Record<
       home: "Home",
       inbox: "Inbox",
       opportunities: "Opportunities",
+      orders: "Orders",
       assistant: "AI Assistant",
       menu: "Menu",
     },
