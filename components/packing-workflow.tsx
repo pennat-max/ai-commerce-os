@@ -37,6 +37,7 @@ export function PackingWorkflow() {
   const [trackingScan, setTrackingScan] = useState("");
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [result, setResult] = useState<string | null>(null);
+  const [isMarkedReady, setIsMarkedReady] = useState(false);
 
   if (!activeOrder) {
     return (
@@ -61,6 +62,7 @@ export function PackingWorkflow() {
     setCheckedItems((current) =>
       current.includes(item) ? current.filter((value) => value !== item) : [...current, item],
     );
+    setIsMarkedReady(false);
     setResult(null);
   }
 
@@ -69,6 +71,7 @@ export function PackingWorkflow() {
     setSkuScan(activeOrder.sku);
     setTrackingScan(activeOrder.trackingNumber);
     setCheckedItems(checklistItems);
+    setIsMarkedReady(false);
     setResult("เติมข้อมูลสแกนตัวอย่างครบแล้ว พร้อมกดพร้อมส่ง");
   }
 
@@ -106,6 +109,7 @@ export function PackingWorkflow() {
               value={orderScan}
               onChange={(event) => {
                 setOrderScan(event.target.value);
+                setIsMarkedReady(false);
                 setResult(null);
               }}
               className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 text-base font-black text-slate-950 outline-none focus:border-emerald-400"
@@ -119,6 +123,7 @@ export function PackingWorkflow() {
               value={skuScan}
               onChange={(event) => {
                 setSkuScan(event.target.value);
+                setIsMarkedReady(false);
                 setResult(null);
               }}
               className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 text-base font-black text-slate-950 outline-none focus:border-emerald-400"
@@ -139,6 +144,7 @@ export function PackingWorkflow() {
               value={trackingScan}
               onChange={(event) => {
                 setTrackingScan(event.target.value);
+                setIsMarkedReady(false);
                 setResult(null);
               }}
               className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 text-base font-black text-slate-950 outline-none focus:border-emerald-400"
@@ -191,7 +197,10 @@ export function PackingWorkflow() {
           type="button"
           data-action="mock-ready-to-ship"
           disabled={!readyToShip}
-          onClick={() => setResult(`${activeOrder.orderNumber} ถูกบันทึกเป็นพร้อมส่งแล้ว (เดโม)`)}
+          onClick={() => {
+            setIsMarkedReady(true);
+            setResult(`${activeOrder.orderNumber} ถูกบันทึกเป็นพร้อมส่งแล้ว (เดโม)`);
+          }}
           className={`flex min-h-12 items-center justify-center gap-2 rounded-2xl px-3 text-sm font-black shadow-sm ${
             readyToShip
               ? "bg-emerald-700 text-white"
@@ -218,6 +227,16 @@ export function PackingWorkflow() {
           <CheckCircle2 className="mr-2 inline" size={17} />
           {result}
         </div>
+      ) : null}
+
+      {isMarkedReady ? (
+        <Link
+          href={`/app/orders?order=${encodeURIComponent(activeOrder.orderNumber)}&status=ready`}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 text-sm font-black text-white shadow-sm"
+        >
+          ดูสถานะพร้อมส่งในหน้าออเดอร์
+          <ArrowRight size={17} />
+        </Link>
       ) : null}
     </div>
   );

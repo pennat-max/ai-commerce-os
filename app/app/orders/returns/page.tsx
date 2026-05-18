@@ -13,12 +13,14 @@ import { AppShell } from "@/components/app-shell";
 import {
   KpiCard,
   PremiumChip,
+  PremiumEmptyState,
   PremiumFeedCard,
   PremiumIntro,
   PremiumSection,
   type PremiumTone,
 } from "@/components/premium-mobile";
 import {
+  mockOrders,
   mockReturnCases,
   type MockReturnCase,
   type OperationPlatform,
@@ -52,6 +54,7 @@ function iconForStatus(status: ReturnCaseStatus) {
 
 function ReturnCaseCard({ item }: { item: MockReturnCase }) {
   const Icon = iconForStatus(item.status);
+  const relatedOrderExists = mockOrders.some((order) => order.orderNumber === item.orderNumber);
 
   return (
     <PremiumFeedCard
@@ -89,6 +92,25 @@ function ReturnCaseCard({ item }: { item: MockReturnCase }) {
       <div className="mt-3 rounded-2xl border border-white/80 bg-white/75 p-3 shadow-sm">
         <p className="text-xs font-black text-slate-500">Suggested action</p>
         <p className="mt-1 text-sm font-bold leading-6 text-slate-800">{item.suggestedAction}</p>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Link
+          href={`/app/orders?order=${encodeURIComponent(item.orderNumber)}`}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-3 text-center text-sm font-black text-white shadow-sm"
+        >
+          ดูออเดอร์
+          <ArrowRight size={17} />
+        </Link>
+        <span
+          className={`flex min-h-12 items-center justify-center rounded-2xl border px-3 text-center text-xs font-black ${
+            relatedOrderExists
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-amber-200 bg-amber-50 text-amber-800"
+          }`}
+        >
+          {relatedOrderExists ? "พบในคิวเดโม" : "อยู่นอกคิวล่าสุด"}
+        </span>
       </div>
     </PremiumFeedCard>
   );
@@ -146,11 +168,19 @@ export default function ReturnsPage() {
         </PremiumSection>
 
         <PremiumSection title="รายการคืน/เคลม" helper="แต่ละการ์ดมีต้นทุน หลักฐาน และ action ที่ควรทำต่อ">
-          <div className="grid gap-3 lg:grid-cols-2">
-            {mockReturnCases.map((item) => (
-              <ReturnCaseCard key={item.id} item={item} />
-            ))}
-          </div>
+          {mockReturnCases.length === 0 ? (
+            <PremiumEmptyState
+              title="ยังไม่มีเคสคืนหรือเคลม"
+              description="ถ้ามีตีกลับ เคลม หรือขอคืนเงิน ระบบจะแสดงรายการพร้อมหลักฐานและ action ที่ควรทำ"
+              icon={RotateCcw}
+            />
+          ) : (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {mockReturnCases.map((item) => (
+                <ReturnCaseCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
         </PremiumSection>
       </div>
     </AppShell>

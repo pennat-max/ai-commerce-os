@@ -10,7 +10,10 @@ import {
   MessageCircle,
   Package,
   PackageCheck,
+  PackageOpen,
   PieChart,
+  RotateCcw,
+  ShieldAlert,
   ShoppingBag,
   Sparkles,
   ThumbsUp,
@@ -21,6 +24,7 @@ import type { LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { resolveLocale, type Locale, withLocalePath } from "@/lib/i18n";
+import { mockOrders, mockReturnCases } from "@/lib/operations-mock";
 import { calculateProfit, formatBaht, formatPercent } from "@/lib/profit";
 import { listAlerts, listCampaigns, listProducts } from "@/lib/repositories";
 import type { Campaign, Product } from "@/types/domain";
@@ -412,6 +416,36 @@ function FocusItem({
   );
 }
 
+function OperationSummaryCard({
+  href,
+  label,
+  value,
+  helper,
+  icon: Icon,
+  accent,
+}: {
+  href: string;
+  label: string;
+  value: string;
+  helper: string;
+  icon: LucideIcon;
+  accent: Accent;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`rounded-[1.2rem] border p-3 shadow-sm transition active:scale-[0.99] ${accentStyles[accent].border} ${accentStyles[accent].soft}`}
+    >
+      <span className={`flex size-9 items-center justify-center rounded-2xl ${accentStyles[accent].icon}`}>
+        <Icon size={18} />
+      </span>
+      <p className="mt-3 text-[11px] font-black leading-tight text-slate-600">{label}</p>
+      <p className="mt-1 text-2xl font-black leading-none text-slate-950">{value}</p>
+      <p className={`mt-2 text-[11px] font-bold leading-4 ${accentStyles[accent].text}`}>{helper}</p>
+    </Link>
+  );
+}
+
 function MiniProductStack({ count }: { count: number }) {
   const platforms: PlatformLogoKey[] = ["shopee", "lazada", "tiktok"];
 
@@ -734,6 +768,14 @@ export default async function SellerDashboardPage({
   const focusLowProfit = warningProducts.length + warningCampaigns.length;
   const focusPending = campaignRows.length;
   const focusLowStock = lowStockProducts.length;
+  const pendingPackOrders = mockOrders.filter((order) =>
+    ["รอพิมพ์ใบ", "รอหยิบของ", "กำลังแพ็ก"].includes(order.status),
+  ).length;
+  const readyToShipOrders = mockOrders.filter((order) => order.status === "พร้อมส่ง").length;
+  const returnedCases = mockReturnCases.filter((item) =>
+    item.status === "สินค้าตีกลับ" || item.reason === "ลูกค้าไม่รับสินค้า",
+  ).length;
+  const pendingClaimCases = mockReturnCases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
   const unreadAlerts = alerts.filter((alert) => !alert.isRead).length;
   const alertBadgeCount = Math.min(99, unreadAlerts || alerts.length);
   const recommendedBaselineMargin = recommendedCampaign
@@ -803,6 +845,50 @@ export default async function SellerDashboardPage({
             <FocusItem label={copy.focus.lowProfit} value={`${focusLowProfit}`} unit={copy.focus.unit} icon={Clock3} accent="orange" />
             <FocusItem label={copy.focus.pending} value={`${focusPending}`} unit={copy.focus.unit} icon={Clock3} accent="blue" />
             <FocusItem label={copy.focus.lowStock} value={`${focusLowStock}`} unit={copy.focus.unit} icon={Package} accent="violet" />
+          </div>
+        </section>
+
+        <section className="rounded-[1.35rem] border border-slate-100 bg-white/90 p-4 shadow-[0_14px_36px_rgba(15,23,42,0.06)]">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-black text-slate-950">สรุปงานออเดอร์และเคลม</h2>
+            <Link href={hrefFor("/app/orders")} className="flex items-center gap-1 text-xs font-black text-blue-600">
+              ดูออเดอร์
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2 min-[560px]:grid-cols-4 min-[560px]:gap-3">
+            <OperationSummaryCard
+              href={hrefFor("/app/orders")}
+              label="ออเดอร์รอแพ็ก"
+              value={`${pendingPackOrders}`}
+              helper="พิมพ์ใบและเริ่มแพ็ก"
+              icon={PackageOpen}
+              accent="orange"
+            />
+            <OperationSummaryCard
+              href={hrefFor("/app/orders?status=ready")}
+              label="พร้อมส่ง"
+              value={`${readyToShipOrders}`}
+              helper="รอขนส่งรับ"
+              icon={PackageCheck}
+              accent="green"
+            />
+            <OperationSummaryCard
+              href={hrefFor("/app/orders/returns")}
+              label="ตีกลับ"
+              value={`${returnedCases}`}
+              helper="รอเช็กสภาพสินค้า"
+              icon={RotateCcw}
+              accent="blue"
+            />
+            <OperationSummaryCard
+              href={hrefFor("/app/orders/returns")}
+              label="เคลมรอดำเนินการ"
+              value={`${pendingClaimCases}`}
+              helper="ติดตามหลักฐานและต้นทุน"
+              icon={ShieldAlert}
+              accent="red"
+            />
           </div>
         </section>
 
