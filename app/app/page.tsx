@@ -24,7 +24,8 @@ import type { LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { resolveLocale, type Locale, withLocalePath } from "@/lib/i18n";
-import { listOrders, listReturnCases, packingStatuses } from "@/lib/operations-repository";
+import { calculateOperationsAnalytics } from "@/lib/operations-analytics";
+import { listOrders, listReturnCases } from "@/lib/operations-repository";
 import { calculateProfit, formatBaht, formatPercent } from "@/lib/profit";
 import { listAlerts, listCampaigns, listProducts } from "@/lib/repositories";
 import type { Campaign, Product } from "@/types/domain";
@@ -723,6 +724,7 @@ export default async function SellerDashboardPage({
   const alerts = alertsResult.data;
   const orders = ordersResult.data;
   const returnCases = returnCasesResult.data;
+  const operationsAnalytics = calculateOperationsAnalytics(orders, returnCases);
   const productById = new Map(products.map((product) => [product.id, product]));
   const campaignRows: CampaignAnalysis[] = campaigns.flatMap((campaign) => {
     const product = productById.get(campaign.productId);
@@ -772,12 +774,10 @@ export default async function SellerDashboardPage({
   const focusLowProfit = warningProducts.length + warningCampaigns.length;
   const focusPending = campaignRows.length;
   const focusLowStock = lowStockProducts.length;
-  const pendingPackOrders = orders.filter((order) => packingStatuses.has(order.status)).length;
-  const readyToShipOrders = orders.filter((order) => order.status === "พร้อมส่ง").length;
-  const returnedCases = returnCases.filter((item) =>
-    item.status === "สินค้าตีกลับ" || item.reason === "ลูกค้าไม่รับสินค้า",
-  ).length;
-  const pendingClaimCases = returnCases.filter((item) => item.status !== "คืนเข้า stock แล้ว").length;
+  const pendingPackOrders = operationsAnalytics.pendingPackOrders;
+  const readyToShipOrders = operationsAnalytics.readyToShipOrders;
+  const returnedCases = operationsAnalytics.openReturnCases;
+  const pendingClaimCases = operationsAnalytics.openClaimCases;
   const unreadAlerts = alerts.filter((alert) => !alert.isRead).length;
   const alertBadgeCount = Math.min(99, unreadAlerts || alerts.length);
   const recommendedBaselineMargin = recommendedCampaign

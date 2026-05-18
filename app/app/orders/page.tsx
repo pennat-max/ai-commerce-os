@@ -16,11 +16,9 @@ import {
   PremiumSection,
 } from "@/components/premium-mobile";
 import { OrderOperationsBoard } from "@/components/order-operations-board";
-import {
-  getOperationsInsights,
-  type OrderPipelineStatus,
-} from "@/lib/operations-mock";
-import { buildOrderPipelineCounts, listOrders, packingStatuses } from "@/lib/operations-repository";
+import { type OrderPipelineStatus } from "@/lib/operations-mock";
+import { calculateOperationsAnalytics } from "@/lib/operations-analytics";
+import { buildOrderPipelineCounts, listOrders, listReturnCases } from "@/lib/operations-repository";
 
 function pipelineIcon(status: OrderPipelineStatus) {
   if (status === "มีปัญหา") return AlertTriangle;
@@ -31,12 +29,12 @@ function pipelineIcon(status: OrderPipelineStatus) {
 }
 
 export default async function OrdersPage() {
-  const { data: orders } = await listOrders();
+  const [{ data: orders }, { data: returnCases }] = await Promise.all([
+    listOrders(),
+    listReturnCases(),
+  ]);
   const pipelineCounts = buildOrderPipelineCounts(orders);
-  const readyCount = orders.filter((order) => order.status === "พร้อมส่ง").length;
-  const problemCount = orders.filter((order) => order.status === "มีปัญหา").length;
-  const packingCount = orders.filter((order) => packingStatuses.has(order.status)).length;
-  const insights = getOperationsInsights();
+  const analytics = calculateOperationsAnalytics(orders, returnCases);
 
   return (
     <AppShell
@@ -52,9 +50,9 @@ export default async function OrdersPage() {
           tone="emerald"
         >
           <div className="grid grid-cols-3 gap-2">
-            <KpiCard label="รอแพ็ก" value={`${packingCount}`} helper="ควรเคลียร์ก่อนเที่ยง" tone="amber" />
-            <KpiCard label="พร้อมส่ง" value={`${readyCount}`} helper="รอขนส่งรับ" tone="emerald" />
-            <KpiCard label="มีปัญหา" value={`${problemCount}`} helper="ต้องติดตามวันนี้" tone="rose" />
+            <KpiCard label="รอแพ็ก" value={`${analytics.pendingPackOrders}`} helper="ควรเคลียร์ก่อนเที่ยง" tone="amber" />
+            <KpiCard label="พร้อมส่ง" value={`${analytics.readyToShipOrders}`} helper="รอขนส่งรับ" tone="emerald" />
+            <KpiCard label="มีปัญหา" value={`${analytics.issueOrders}`} helper="ต้องติดตามวันนี้" tone="rose" />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
             <Link
@@ -95,15 +93,49 @@ export default async function OrdersPage() {
           </div>
         </PremiumSection>
 
+        <PremiumSection title="วิเคราะห์งานวันนี้" helper="คำนวณจากออเดอร์ งานแพ็ก เคสคืน และเคลมในระบบ">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            <KpiCard
+              label="ส่งสำเร็จ"
+              value={`${analytics.completionRate.toFixed(0)}%`}
+              helper={`${analytics.deliveredOrders}/${analytics.totalOrders} ออเดอร์`}
+              tone="emerald"
+              icon={PackageCheck}
+            />
+            <KpiCard
+              label="งานเปิดอยู่"
+              value={`${analytics.workloadScore}`}
+              helper="รวมแพ็ก พร้อมส่ง คืน/เคลม"
+              tone="sky"
+              icon={ClipboardList}
+            />
+            <KpiCard
+              label="คืน/เคลม"
+              value={`฿${analytics.totalCostImpact.toLocaleString("th-TH")}`}
+              helper={`${analytics.openReturnCases + analytics.openClaimCases} เคสยังไม่จบ`}
+              tone={analytics.healthTone}
+              icon={RotateCcw}
+            />
+            <KpiCard
+              label="อัตราเสี่ยง"
+              value={`${analytics.issueRate.toFixed(0)}%`}
+              helper="ออเดอร์ปัญหา + เคสเปิด"
+              tone={analytics.healthTone}
+              icon={AlertTriangle}
+            />
+          </div>
+        </PremiumSection>
+
         <PremiumSection title="AI operations insight" helper="สัญญาณที่ควรดูวันนี้ก่อนงานแพ็กสะสม">
           <div className="grid gap-3 md:grid-cols-2">
-            {insights.map((insight) => (
+            {analytics.insights.map((insight) => (
               <PremiumFeedCard
                 key={insight.id}
                 icon={AlertTriangle}
                 title={insight.title}
                 description={insight.description}
                 tone={insight.tone}
+                href={insight.href}
               />
             ))}
           </div>
