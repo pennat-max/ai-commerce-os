@@ -2,8 +2,11 @@ import { PackageCheck } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { PackingWorkflow } from "@/components/packing-workflow";
 import { PremiumIntro } from "@/components/premium-mobile";
+import { listOrders } from "@/lib/operations-repository";
 
-export default function PackingPage() {
+export default async function PackingPage() {
+  const { data: orders } = await listOrders();
+
   return (
     <AppShell
       title="แพ็กและสแกน"
@@ -17,7 +20,7 @@ export default function PackingPage() {
           icon={PackageCheck}
           tone="sky"
         />
-        <PackingWorkflow />
+        <PackingWorkflow orders={orders} />
       </div>
     </AppShell>
   );

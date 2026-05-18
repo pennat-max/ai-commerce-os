@@ -24,7 +24,8 @@ import type { LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { recommendCampaignDecision } from "@/lib/campaign-decisions";
 import { resolveLocale, type Locale, withLocalePath } from "@/lib/i18n";
-import { mockOrders, mockReturnCases } from "@/lib/operations-mock";
+import { mockReturnCases } from "@/lib/operations-mock";
+import { listOrders, packingStatuses } from "@/lib/operations-repository";
 import { calculateProfit, formatBaht, formatPercent } from "@/lib/profit";
 import { listAlerts, listCampaigns, listProducts } from "@/lib/repositories";
 import type { Campaign, Product } from "@/types/domain";
@@ -710,15 +711,17 @@ export default async function SellerDashboardPage({
   const locale = resolveLocale(params.lang);
   const copy = homeCopy[locale];
   const hrefFor = (path: string) => withLocalePath(path, locale);
-  const [productsResult, campaignsResult, alertsResult] = await Promise.all([
+  const [productsResult, campaignsResult, alertsResult, ordersResult] = await Promise.all([
     listProducts(),
     listCampaigns(),
     listAlerts(),
+    listOrders(),
   ]);
 
   const products = productsResult.data;
   const campaigns = campaignsResult.data;
   const alerts = alertsResult.data;
+  const orders = ordersResult.data;
   const productById = new Map(products.map((product) => [product.id, product]));
   const campaignRows: CampaignAnalysis[] = campaigns.flatMap((campaign) => {
     const product = productById.get(campaign.productId);
@@ -768,10 +771,8 @@ export default async function SellerDashboardPage({
   const focusLowProfit = warningProducts.length + warningCampaigns.length;
   const focusPending = campaignRows.length;
   const focusLowStock = lowStockProducts.length;
-  const pendingPackOrders = mockOrders.filter((order) =>
-    ["รอพิมพ์ใบ", "รอหยิบของ", "กำลังแพ็ก"].includes(order.status),
-  ).length;
-  const readyToShipOrders = mockOrders.filter((order) => order.status === "พร้อมส่ง").length;
+  const pendingPackOrders = orders.filter((order) => packingStatuses.has(order.status)).length;
+  const readyToShipOrders = orders.filter((order) => order.status === "พร้อมส่ง").length;
   const returnedCases = mockReturnCases.filter((item) =>
     item.status === "สินค้าตีกลับ" || item.reason === "ลูกค้าไม่รับสินค้า",
   ).length;

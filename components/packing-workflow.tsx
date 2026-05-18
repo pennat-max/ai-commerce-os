@@ -13,7 +13,7 @@ import {
   Truck,
 } from "lucide-react";
 import { PremiumChip, PremiumPanel } from "@/components/premium-mobile";
-import { getPackingQueue, mockOrders } from "@/lib/operations-mock";
+import { orderPipeline, type MockOrder } from "@/lib/operations-mock";
 
 const checklistItems = [
   "เช็กเลขออเดอร์ตรงกับใบปะหน้า",
@@ -22,15 +22,20 @@ const checklistItems = [
   "ติดใบปะหน้าและเลข tracking ชัดเจน",
 ];
 
-export function PackingWorkflow() {
+const packingQueueStatuses = new Set(orderPipeline.slice(0, 4));
+
+export function PackingWorkflow({ orders }: { orders: MockOrder[] }) {
   const searchParams = useSearchParams();
   const requestedOrder = searchParams.get("order");
-  const queue = getPackingQueue();
+  const queue = useMemo(
+    () => orders.filter((order) => packingQueueStatuses.has(order.status)),
+    [orders],
+  );
   const activeOrder = useMemo(
     () =>
-      mockOrders.find((order) => order.id === requestedOrder || order.orderNumber === requestedOrder) ??
+      orders.find((order) => order.id === requestedOrder || order.orderNumber === requestedOrder) ??
       queue[0],
-    [queue, requestedOrder],
+    [orders, queue, requestedOrder],
   );
   const [orderScan, setOrderScan] = useState(activeOrder?.orderNumber ?? "");
   const [skuScan, setSkuScan] = useState("");

@@ -18,10 +18,9 @@ import {
 import { OrderOperationsBoard } from "@/components/order-operations-board";
 import {
   getOperationsInsights,
-  getOrderPipelineCounts,
-  mockOrders,
   type OrderPipelineStatus,
 } from "@/lib/operations-mock";
+import { buildOrderPipelineCounts, listOrders, packingStatuses } from "@/lib/operations-repository";
 
 function pipelineIcon(status: OrderPipelineStatus) {
   if (status === "มีปัญหา") return AlertTriangle;
@@ -31,13 +30,12 @@ function pipelineIcon(status: OrderPipelineStatus) {
   return ClipboardList;
 }
 
-export default function OrdersPage() {
-  const pipelineCounts = getOrderPipelineCounts();
-  const readyCount = mockOrders.filter((order) => order.status === "พร้อมส่ง").length;
-  const problemCount = mockOrders.filter((order) => order.status === "มีปัญหา").length;
-  const packingCount = mockOrders.filter((order) =>
-    ["รอพิมพ์ใบ", "รอหยิบของ", "กำลังแพ็ก"].includes(order.status),
-  ).length;
+export default async function OrdersPage() {
+  const { data: orders } = await listOrders();
+  const pipelineCounts = buildOrderPipelineCounts(orders);
+  const readyCount = orders.filter((order) => order.status === "พร้อมส่ง").length;
+  const problemCount = orders.filter((order) => order.status === "มีปัญหา").length;
+  const packingCount = orders.filter((order) => packingStatuses.has(order.status)).length;
   const insights = getOperationsInsights();
 
   return (
@@ -112,7 +110,7 @@ export default function OrdersPage() {
         </PremiumSection>
 
         <PremiumSection title="ออเดอร์ล่าสุด" helper="การ์ดใหญ่ อ่านง่าย และกดไปทำงานต่อได้ทันที">
-          <OrderOperationsBoard orders={mockOrders} />
+          <OrderOperationsBoard orders={orders} />
         </PremiumSection>
       </div>
     </AppShell>

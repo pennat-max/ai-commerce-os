@@ -21,6 +21,7 @@ import {
   PremiumPanel,
   type PremiumTone,
 } from "@/components/premium-mobile";
+import { updateOrderAction } from "@/app/app/orders/actions";
 import {
   orderPipeline,
   type MockOrder,
@@ -108,7 +109,7 @@ function OrderCard({
   order: MockOrder;
   status: OrderPipelineStatus;
   focused: boolean;
-  onAction: (order: MockOrder, action: "print" | "pack" | "ready" | "issue") => void;
+  onAction: (order: MockOrder, action: "print" | "pack" | "ready" | "issue") => void | Promise<void>;
 }) {
   const Icon = pipelineIcon(status);
 
@@ -159,7 +160,7 @@ function OrderCard({
         <button
           type="button"
           data-action="mock-print-label"
-          onClick={() => onAction(order, "print")}
+          onClick={() => void onAction(order, "print")}
           className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 text-xs font-black text-slate-700 shadow-sm sm:text-sm"
         >
           <FileText size={16} />
@@ -168,7 +169,7 @@ function OrderCard({
         <Link
           href={`/app/orders/packing?order=${encodeURIComponent(order.orderNumber)}`}
           className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-2 text-center text-xs font-black text-white shadow-sm sm:text-sm"
-          onClick={() => onAction(order, "pack")}
+          onClick={() => void onAction(order, "pack")}
         >
           <ScanLine size={16} />
           เริ่มแพ็ก
@@ -176,7 +177,7 @@ function OrderCard({
         <button
           type="button"
           data-action="mock-ready-to-ship"
-          onClick={() => onAction(order, "ready")}
+          onClick={() => void onAction(order, "ready")}
           className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-2 text-xs font-black text-emerald-800 shadow-sm sm:text-sm"
         >
           <Truck size={16} />
@@ -185,7 +186,7 @@ function OrderCard({
         <button
           type="button"
           data-action="mock-report-issue"
-          onClick={() => onAction(order, "issue")}
+          onClick={() => void onAction(order, "issue")}
           className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-2 text-xs font-black text-rose-800 shadow-sm sm:text-sm"
         >
           <RotateCcw size={16} />
@@ -221,10 +222,21 @@ export function OrderOperationsBoard({ orders }: { orders: MockOrder[] }) {
     });
   }, [focusedOrder, orders]);
 
-  function handleAction(order: MockOrder, action: "print" | "pack" | "ready" | "issue") {
+  async function handleAction(order: MockOrder, action: "print" | "pack" | "ready" | "issue") {
     const nextStatus = statusAfterAction(action);
     setStatusOverrides((current) => ({ ...current, [order.orderNumber]: nextStatus }));
-    setNotice(actionMessage(order, action));
+    const optimisticMessage = actionMessage(order, action);
+    setNotice(optimisticMessage);
+
+    const result = await updateOrderAction(order.id, action);
+    if (!result.ok) {
+      setNotice(`${optimisticMessage} · ${result.error ?? "ยังบันทึกลงฐานข้อมูลไม่ได้"}`);
+      return;
+    }
+
+    if (result.source === "supabase") {
+      setNotice(`${optimisticMessage} · บันทึกลง Supabase แล้ว`);
+    }
   }
 
   if (orders.length === 0) {
