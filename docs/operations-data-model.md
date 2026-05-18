@@ -247,7 +247,7 @@ Customer return/refund/refused delivery workflow. Claims can link to this table.
 | --- | --- | --- |
 | `id` | `uuid primary key default gen_random_uuid()` | Internal id. |
 | `organization_id` | `uuid not null references organizations(id) on delete cascade` | Tenant boundary. |
-| `order_id` | `uuid references operation_orders(id) on delete set null` | Related order if known. |
+| `order_id` | `uuid references operation_orders(id)` | Related order if known; order deletion should be blocked while cases exist. |
 | `case_number` | `text not null` | Seller-visible case code. |
 | `platform` | `marketplace_platform not null` | Shopee/Lazada/TikTok. |
 | `external_case_id` | `text` | Marketplace case id later. |
@@ -281,8 +281,8 @@ Compensation/dispute layer for return cases or direct logistics damage. Keep sep
 | --- | --- | --- |
 | `id` | `uuid primary key default gen_random_uuid()` | Internal id. |
 | `organization_id` | `uuid not null references organizations(id) on delete cascade` | Tenant boundary. |
-| `return_case_id` | `uuid references return_cases(id) on delete set null` | Related return case. |
-| `order_id` | `uuid references operation_orders(id) on delete set null` | Related order for direct carrier claim. |
+| `return_case_id` | `uuid references return_cases(id)` | Related return case; return deletion should be blocked while claims exist. |
+| `order_id` | `uuid references operation_orders(id)` | Related order for direct carrier claim; order deletion should be blocked while claims exist. |
 | `claim_number` | `text not null` | Seller-visible claim code. |
 | `claim_type` | `claim_case_type not null` | `carrier_damage`, `marketplace_dispute`, `wrong_item`, `missing_item`, `goodwill_compensation`. |
 | `status` | `claim_case_status not null default 'opened'` | Current status. |
@@ -417,7 +417,9 @@ Each repository should follow the existing `RepositoryResult<T>` pattern:
 
 ## Migration Phase Checklist
 
-The next phase should create a migration only. It should not rewrite UI logic yet.
+Migration implementation: `supabase/migrations/20260518165000_operations_schema.sql`.
+
+This migration creates the schema only. It does not rewrite UI logic yet.
 
 1. Create enum types with `do $$ begin create type ... exception when duplicate_object then null; end $$;`.
 2. Add tenant-safe composite indexes on existing `stores` and `products`.
